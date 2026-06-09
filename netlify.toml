@@ -4,11 +4,9 @@
   publish = "dist"
 
 [functions]
-  directory = "netlify/functions"[build]
+  directory = "netlify/functions"
   command = "npm run build"
   publish = "BackPackKidzWebsite"
   functions = "netlify/functions"
 
-[dev]
-  publish = "BackPackKidzWebsite"
-  functions = "netlify/functions"
+
