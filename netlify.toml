@@ -5,8 +5,3 @@
 
 [functions]
   directory = "netlify/functions"
-  command = "npm run build"
-  publish = "BackPackKidzWebsite"
-  functions = "netlify/functions"
-
-
