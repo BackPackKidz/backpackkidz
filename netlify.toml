@@ -1,4 +1,10 @@
 [build]
+  base = "BackPackKidzWebsite"
+  command = "npm run build"
+  publish = "dist"
+
+[functions]
+  directory = "netlify/functions"[build]
   command = "npm run build"
   publish = "BackPackKidzWebsite"
   functions = "netlify/functions"
