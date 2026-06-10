@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+      name="description"
+      content="Sponsor weekend food for children in Charlotte County, Florida. Sponsor a kid, a group, a class, a grade, or a whole school through Back Pack Kidz."
+    >
+    <title>Sponsor a Child | Back Pack Kidz</title>
+    <link rel="icon" href="../assets/backpack-kidz-logo.png">
+    <link rel="stylesheet" href="../style.css">
+    <script src="../script.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="navbar" aria-label="Primary navigation">
+        <a href="/" class="nav-logo" aria-label="Back Pack Kidz Home">
+          <img
+            class="logo-image"
+            src="../assets/backpack-kidz-logo.png"
+            alt=""
+            width="42"
+            height="42"
+          >
+          <span class="logo-text">Back Pack Kidz</span>
+        </a>
+
+        <button
+          class="nav-toggle"
+          type="button"
+          aria-controls="primary-navigation"
+          aria-expanded="false"
+        >
+          <span class="sr-only">Open navigation menu</span>
+          <span class="nav-toggle-bars" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </button>
+
+        <div class="nav-panel" id="primary-navigation">
+          <ul class="nav-menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/pages/about.html">About</a></li>
+            <li><a href="/pages/programs.html">Programs</a></li>
+            <li><a href="/pages/sponsor.html" aria-current="page">Sponsor</a></li>
+            <li><a href="/pages/gallery.html">Gallery</a></li>
+            <li><a href="/pages/our-partners.html">Our Partners</a></li>
+            <li><a href="/pages/contact.html">Contact</a></li>
+          </ul>
+
+          <div class="nav-actions">
+            <a href="/pages/get-involved.html" class="nav-link-secondary">Get Involved</a>
+            <a href="/pages/donate.html" class="nav-cta" data-donate-link>Donate Now</a>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main id="content">
+      <section class="page-hero section" data-parallax-section>
+        <div class="hero-texture" aria-hidden="true"></div>
+        <div class="section-inner page-hero-grid">
+          <div class="page-hero-copy" data-reveal>
+            <p class="eyebrow">Sponsor a Child</p>
+            <h1>Give one child a steadier weekend, all year long.</h1>
+            <p class="lede">
+              Sponsorship is one of the most direct ways to fight weekend
+              hunger. Choose to sponsor a single child or reach further — a
+              group, a class, a grade, or an entire school in Charlotte County.
+            </p>
+            <div class="button-row">
+              <a href="#sponsor-form" class="button button-primary">Become a Sponsor</a>
+              <a href="/pages/donate.html" class="button button-secondary" data-donate-link>One-Time Gift</a>
+            </div>
+          </div>
+
+          <aside class="page-hero-aside" data-reveal>
+            <p class="aside-stat">
+              <strong>$160</strong>
+              <span>Sponsors one child for a school year</span>
+            </p>
+            <p>
+              That is weekend food, every weekend of the school year, for one
+              child who might otherwise go without.
+            </p>
+            <!-- TODO (owner): Confirm the $160 per-child, per-school-year
+                 amount. It currently matches COST_PER_CHILD in
+                 netlify/sponsorship-utils.mjs. -->
+          </aside>
+        </div>
+      </section>
+
+      <section class="section difference-section" aria-labelledby="tiers-title">
+        <div class="section-inner">
+          <div class="section-heading" data-reveal>
+            <h2 id="tiers-title">Choose how far your sponsorship reaches</h2>
+            <p>
+              Every level is built on the same idea: $160 covers one child for
+              the school year. Pick the scope that fits your heart and budget.
+            </p>
+          </div>
+
+          <div class="tier-grid">
+            <article class="tier-card is-featured" data-reveal>
+              <span class="tier-tag">Most personal</span>
+              <h3>Sponsor a kid</h3>
+              <p class="tier-price">$160<small>one child, one school year</small></p>
+              <p>Provide weekend food for a single child across the school year.</p>
+              <a href="#sponsor-form" class="button button-primary">Sponsor a kid</a>
+            </article>
+
+            <article class="tier-card" data-reveal>
+              <span class="tier-tag">Together</span>
+              <h3>Sponsor a group</h3>
+              <p class="tier-price">$160<small>&times; the number of children</small></p>
+              <p>Pool with family or friends to sponsor several children at once.</p>
+              <a href="#sponsor-form" class="button button-secondary">Sponsor a group</a>
+            </article>
+
+            <article class="tier-card" data-reveal>
+              <span class="tier-tag">Classroom</span>
+              <h3>Sponsor a class</h3>
+              <p class="tier-price">By class size<small>we'll help you scope it</small></p>
+              <p>Cover a classroom of students for steady weekend support.</p>
+              <a href="/pages/contact.html" class="button button-secondary">Talk to us</a>
+            </article>
+
+            <article class="tier-card" data-reveal>
+              <span class="tier-tag">Grade level</span>
+              <h3>Sponsor a grade</h3>
+              <p class="tier-price">By grade size<small>custom to the school</small></p>
+              <p>Support an entire grade so no child in it misses out.</p>
+              <a href="/pages/contact.html" class="button button-secondary">Talk to us</a>
+            </article>
+
+            <article class="tier-card" data-reveal>
+              <span class="tier-tag">Whole school</span>
+              <h3>Sponsor a school</h3>
+              <p class="tier-price">Let's plan it<small>biggest local impact</small></p>
+              <p>Champion weekend food support for an entire school community.</p>
+              <a href="/pages/contact.html" class="button button-secondary">Talk to us</a>
+            </article>
+          </div>
+          <!-- TODO (owner): Confirm typical class/grade/school sizes if you'd
+               like fixed totals shown instead of "talk to us". -->
+        </div>
+      </section>
+
+      <section class="section" id="sponsor-form" aria-labelledby="sponsor-form-title">
+        <div class="section-inner form-layout">
+          <div class="form-aside" data-reveal>
+            <p class="eyebrow">Sponsorship Details</p>
+            <h2 id="sponsor-form-title">Start your sponsorship.</h2>
+            <p class="lede">
+              Tell us how many children you'd like to sponsor and we'll follow up
+              to finalize your gift. Your sponsorship turns directly into
+              weekend food for local kids.
+            </p>
+            <div class="support-panel" data-sponsor-calc data-cost-per-child="160" data-reveal>
+              <h3>Estimated yearly sponsorship</h3>
+              <p class="tier-price" data-sponsor-total>$0</p>
+              <p>Based on $160 per child for the school year.</p>
+            </div>
+          </div>
+
+          <div data-reveal>
+            <form
+              class="form-shell"
+              data-api-form
+              action="/api/sponsorships"
+              aria-describedby="sponsor-form-note"
+            >
+              <p id="sponsor-form-note" class="field-help">
+                Required fields are marked with <span aria-hidden="true">*</span>.
+              </p>
+
+              <div class="form-grid">
+                <div class="form-field">
+                  <label for="sponsorName">Your name <span aria-hidden="true">*</span></label>
+                  <input id="sponsorName" name="sponsorName" type="text" autocomplete="name" required>
+                  <p class="field-error" data-error-for="sponsorName"></p>
+                </div>
+                <div class="form-field">
+                  <label for="organizationName">Organization (optional)</label>
+                  <input id="organizationName" name="organizationName" type="text" autocomplete="organization">
+                </div>
+                <div class="form-field">
+                  <label for="sp-email">Email <span aria-hidden="true">*</span></label>
+                  <input id="sp-email" name="email" type="email" autocomplete="email" required>
+                  <p class="field-error" data-error-for="email"></p>
+                </div>
+                <div class="form-field">
+                  <label for="sp-phone">Phone</label>
+                  <input id="sp-phone" name="phone" type="tel" autocomplete="tel">
+                </div>
+                <div class="form-field">
+                  <label for="numberOfChildren">Number of children <span aria-hidden="true">*</span></label>
+                  <input
+                    id="numberOfChildren"
+                    name="numberOfChildren"
+                    type="number"
+                    min="1"
+                    step="1"
+                    inputmode="numeric"
+                    data-sponsor-count
+                    required
+                  >
+                  <p class="field-error" data-error-for="numberOfChildren"></p>
+                </div>
+                <div class="form-field">
+                  <label for="paymentMethod">Preferred payment method</label>
+                  <select id="paymentMethod" name="paymentMethod">
+                    <option value="">Select one</option>
+                    <option>PayPal / card</option>
+                    <option>Check</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+                <div class="form-field form-field-full">
+                  <label for="sp-message">Message (optional)</label>
+                  <textarea id="sp-message" name="message" rows="4"></textarea>
+                </div>
+              </div>
+
+              <label class="check-row" for="isAnonymous">
+                <input id="isAnonymous" name="isAnonymous" type="checkbox" value="true">
+                <span>Make this sponsorship anonymous.</span>
+              </label>
+
+              <div class="form-submit-row">
+                <button class="button button-primary" type="submit">Start my sponsorship</button>
+                <p class="form-status" data-form-status role="status" aria-live="polite"></p>
+              </div>
+            </form>
+
+            <div class="form-success" data-form-success hidden>
+              <h2>Thank you for sponsoring!</h2>
+              <p>
+                Your sponsorship details have been received. A team member will
+                reach out to finalize your gift and share next steps.
+              </p>
+              <p>
+                <a href="/pages/donate.html" class="button button-primary" data-donate-link>Continue to Donate</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section mission-section" aria-labelledby="sponsor-cta-title">
+        <div class="section-inner mission-panel" data-reveal>
+          <div>
+            <h2 id="sponsor-cta-title">Prefer to give another way?</h2>
+            <p>
+              A one-time or monthly donation supports the same children and the
+              same weekend bags. Every gift keeps a child fed.
+            </p>
+          </div>
+          <div class="button-row">
+            <a href="/pages/donate.html" class="button button-light" data-donate-link>Donate Now</a>
+            <a href="/pages/contact.html" class="button button-outline-light">Ask a Question</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <a href="/pages/donate.html" class="floating-donate" data-donate-link>Donate Now</a>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <a href="/" class="footer-logo" aria-label="Back Pack Kidz Home">
+            <img src="../assets/backpack-kidz-logo.png" alt="" width="44" height="44" loading="lazy">
+            <span>Back Pack Kidz</span>
+          </a>
+          <p>
+            Fueling futures and fighting weekend hunger — one child, one
+            weekend at a time — through the power of community in Charlotte
+            County.
+          </p>
+          <!-- TODO: Replace these placeholder social links with the official
+               Back Pack Kidz Facebook, X/Twitter, and Instagram URLs. -->
+          <div class="social-links" aria-label="Social links">
+            <a href="/pages/contact.html">Facebook</a>
+            <a href="/pages/contact.html">Twitter</a>
+            <a href="/pages/contact.html">Instagram</a>
+          </div>
+        </div>
+
+        <div class="footer-column">
+          <h2>Quick Links</h2>
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/pages/about.html">About</a></li>
+            <li><a href="/pages/programs.html">Programs</a></li>
+            <li><a href="/pages/gallery.html">Gallery</a></li>
+            <li><a href="/pages/faq.html">FAQ</a></li>
+            <li><a href="/pages/future-events.html">Events</a></li>
+            <li><a href="/pages/contact.html">Contact</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-column">
+          <h2>Get Involved</h2>
+          <ul>
+            <li><a href="/pages/get-involved.html">Volunteer</a></li>
+            <li><a href="/pages/donate.html" data-donate-link>Make a Donation</a></li>
+            <li><a href="/pages/sponsor.html">Sponsor a Child</a></li>
+            <li><a href="/pages/our-partners.html">Partner with Us</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-column">
+          <h2>Contact Us</h2>
+          <ul>
+            <li><a href="mailto:info@backpackkidz.com">info@backpackkidz.com</a></li>
+            <li>Charlotte County, Florida</li>
+          </ul>
+          <a href="/pages/contact.html" class="footer-cta">Make A Difference Today</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>Copyright &copy; 2026 The Back Pack Kidz | Powered by The Back Pack Kidz</p>
+      </div>
+    </footer>
+  </body>
+</html>

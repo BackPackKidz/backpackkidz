@@ -33,7 +33,12 @@ body {
   margin: 0;
   color: var(--text);
   background: var(--white);
-  font-family: 'Brush Script MT', cursive;
+  /* A clean, dependency-free system sans stack. The previous value
+     ('Brush Script MT', cursive) rendered the entire site in a script
+     font, which conflicted with the heavy headings and the professional,
+     donor-facing tone. */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
 }
 
 button,
@@ -2152,6 +2157,627 @@ h3 {
 
   .donate-page .form-submit-row,
   .donate-page .form-submit-row .button {
+    width: 100%;
+  }
+}
+
+/* =========================================================================
+   Shared sub-page + new-page components
+   Built on the existing design tokens so every additional page (About,
+   Programs, Get Involved, Sponsor, Gallery, Contact, FAQ, Events) matches
+   the established look, spacing, and motion language.
+   ========================================================================= */
+
+/* Reusable eyebrow label (the donate page has a scoped version). */
+.eyebrow {
+  width: fit-content;
+  padding: 0.45rem 0.85rem;
+  color: var(--orange-dark);
+  background: rgba(249, 115, 22, 0.11);
+  border: 1px solid rgba(249, 115, 22, 0.22);
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+/* Generic page hero, modeled on the partners hero. */
+.page-hero {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  padding: 5rem 0 4.5rem;
+  background:
+    linear-gradient(120deg, rgba(255, 247, 237, 0.94), rgba(255, 255, 255, 0.9) 44%, rgba(238, 246, 245, 0.9)),
+    var(--white);
+}
+
+.page-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(330px, 0.78fr);
+  gap: 3.5rem;
+  align-items: center;
+}
+
+.page-hero-copy {
+  display: grid;
+  gap: 1.4rem;
+}
+
+.page-hero-copy h1 {
+  max-width: 16ch;
+}
+
+.page-hero-aside {
+  display: grid;
+  gap: 1rem;
+  align-content: center;
+  padding: 2rem;
+  background:
+    linear-gradient(135deg, rgba(23, 37, 84, 0.96), rgba(15, 118, 110, 0.9)),
+    var(--navy);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-strong);
+}
+
+.page-hero-aside h2 {
+  color: var(--white);
+  font-size: 1.35rem;
+}
+
+.page-hero-aside p {
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.page-hero-aside .aside-stat {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.page-hero-aside .aside-stat strong {
+  color: var(--white);
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.page-hero-aside .aside-stat span {
+  color: rgba(255, 255, 255, 0.78);
+  font-weight: 800;
+}
+
+/* Lead paragraph used on sub-pages. */
+.lede {
+  max-width: 680px;
+  color: #334155;
+  font-size: 1.18rem;
+  line-height: 1.7;
+}
+
+/* A two-up content + supporting panel row (reuses partners-intro spacing). */
+.split-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.62fr);
+  gap: 2rem;
+  align-items: stretch;
+}
+
+.support-panel {
+  display: grid;
+  align-content: center;
+  gap: 0.7rem;
+  padding: 1.75rem;
+  background: var(--orange-soft);
+  border: 1px solid rgba(249, 115, 22, 0.24);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+
+.support-panel.support-panel-dark {
+  color: var(--white);
+  background:
+    linear-gradient(135deg, rgba(23, 37, 84, 0.96), rgba(15, 118, 110, 0.9)),
+    var(--navy);
+  border-color: transparent;
+}
+
+.support-panel.support-panel-dark h3,
+.support-panel.support-panel-dark p {
+  color: var(--white);
+}
+
+/* Prose blocks (Our Story, guidelines). */
+.prose {
+  max-width: 760px;
+  display: grid;
+  gap: 1.15rem;
+}
+
+.prose p {
+  font-size: 1.05rem;
+}
+
+.prose h3 {
+  margin-top: 0.5rem;
+  font-size: 1.25rem;
+}
+
+/* Bordered list used for food guidelines and "what to give". */
+.checklist {
+  display: grid;
+  gap: 0.7rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.checklist li {
+  position: relative;
+  padding: 0.35rem 0 0.35rem 1.85rem;
+  color: var(--text);
+  line-height: 1.55;
+}
+
+.checklist li::before {
+  content: "";
+  position: absolute;
+  top: 0.7rem;
+  left: 0;
+  width: 0.85rem;
+  height: 0.85rem;
+  background: var(--orange);
+  border-radius: 50%;
+}
+
+.checklist.checklist-avoid li::before {
+  background: var(--muted);
+}
+
+/* Two-column "do / avoid" guideline cards reuse the feature card chrome. */
+.guideline-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+.guideline-card {
+  padding: 1.6rem;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+}
+
+.guideline-card h3 {
+  margin-bottom: 0.9rem;
+}
+
+/* Gallery */
+.gallery-section {
+  background: var(--white);
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.1rem;
+}
+
+.gallery-item {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+  background: var(--surface-strong);
+  aspect-ratio: 4 / 3;
+  transition: transform 0.24s var(--ease), box-shadow 0.24s var(--ease);
+}
+
+.gallery-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 36px rgba(15, 23, 42, 0.12);
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Placeholder tile for photos the owner will supply later. */
+.gallery-item.is-placeholder {
+  display: grid;
+  place-content: center;
+  gap: 0.4rem;
+  padding: 1.25rem;
+  text-align: center;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(249, 115, 22, 0.12), transparent 36%),
+    linear-gradient(145deg, var(--surface-strong), var(--white));
+}
+
+.gallery-item.is-placeholder span {
+  font-size: 1.6rem;
+}
+
+.gallery-item.is-placeholder strong {
+  color: var(--navy);
+  font-size: 0.98rem;
+}
+
+.gallery-item.is-placeholder small {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.gallery-caption {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 1.4rem 1rem 0.85rem;
+  color: var(--white);
+  background: linear-gradient(180deg, transparent, rgba(15, 31, 70, 0.82));
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+
+/* Events */
+.events-section {
+  background: var(--surface);
+}
+
+.events-list {
+  display: grid;
+  gap: 1.1rem;
+}
+
+.event-card {
+  display: grid;
+  grid-template-columns: 132px minmax(0, 1fr) auto;
+  gap: 1.5rem;
+  align-items: center;
+  padding: 1.5rem;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+  transition: transform 0.24s var(--ease), box-shadow 0.24s var(--ease), border-color 0.24s var(--ease);
+}
+
+.event-card:hover {
+  border-color: rgba(249, 115, 22, 0.28);
+  box-shadow: 0 18px 36px rgba(15, 23, 42, 0.11);
+  transform: translateY(-4px);
+}
+
+.event-date {
+  display: grid;
+  place-content: center;
+  gap: 0.15rem;
+  padding: 0.85rem;
+  text-align: center;
+  color: var(--orange-dark);
+  background: var(--orange-soft);
+  border: 1px solid rgba(249, 115, 22, 0.22);
+  border-radius: var(--radius-md);
+}
+
+.event-date .event-type {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.event-date strong {
+  font-size: 1.05rem;
+  line-height: 1.2;
+}
+
+.event-card .event-body h3 {
+  margin-bottom: 0.4rem;
+}
+
+/* Empty-state panel (events with no live data yet). */
+.empty-state {
+  display: grid;
+  gap: 0.75rem;
+  justify-items: center;
+  max-width: 640px;
+  margin: 0 auto 2.5rem;
+  padding: 2.25rem;
+  text-align: center;
+  background: var(--white);
+  border: 1px dashed rgba(249, 115, 22, 0.4);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+
+/* Sponsor tiers */
+.tier-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+.tier-card {
+  display: grid;
+  gap: 0.85rem;
+  align-content: start;
+  padding: 1.75rem;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+  transition: transform 0.24s var(--ease), box-shadow 0.24s var(--ease), border-color 0.24s var(--ease);
+}
+
+.tier-card:hover {
+  border-color: rgba(249, 115, 22, 0.28);
+  box-shadow: 0 18px 36px rgba(15, 23, 42, 0.11);
+  transform: translateY(-4px);
+}
+
+.tier-card.is-featured {
+  border-color: rgba(249, 115, 22, 0.45);
+  box-shadow: var(--shadow-strong);
+}
+
+.tier-tag {
+  width: fit-content;
+  padding: 0.3rem 0.7rem;
+  color: var(--orange-dark);
+  background: var(--orange-soft);
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.tier-card .tier-price {
+  color: var(--navy);
+  font-size: 1.9rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.tier-card .tier-price small {
+  display: block;
+  margin-top: 0.35rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.tier-card .button {
+  margin-top: 0.35rem;
+}
+
+/* Generic forms (Contact, Volunteer, Sponsor) — mirrors the donation form
+   field styling so functional pages feel identical to the donate page. */
+.form-shell {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  gap: 1.5rem;
+  padding: clamp(1.35rem, 3vw, 2.35rem);
+  background: rgba(255, 255, 255, 0.97);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-strong);
+}
+
+.form-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 7px;
+  background: linear-gradient(90deg, var(--orange), var(--green), var(--navy));
+}
+
+.form-shell .form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.05rem 1.15rem;
+}
+
+.form-shell .form-field {
+  display: grid;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.form-shell .form-field-full {
+  grid-column: 1 / -1;
+}
+
+.form-shell label,
+.form-shell legend {
+  color: var(--navy);
+  font-size: 1rem;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.form-shell label span {
+  color: var(--orange-dark);
+}
+
+.form-shell input,
+.form-shell select,
+.form-shell textarea {
+  width: 100%;
+  min-height: 54px;
+  padding: 0.9rem 1rem;
+  color: var(--text);
+  background: var(--white);
+  border: 1px solid #d8dee7;
+  border-radius: 14px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  outline: none;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.form-shell textarea {
+  min-height: 130px;
+  resize: vertical;
+  line-height: 1.55;
+}
+
+.form-shell select {
+  cursor: pointer;
+}
+
+.form-shell input:hover,
+.form-shell select:hover,
+.form-shell textarea:hover {
+  border-color: rgba(249, 115, 22, 0.42);
+  background: #fffdf9;
+}
+
+.form-shell input:focus,
+.form-shell select:focus,
+.form-shell textarea:focus {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.16), 0 10px 20px rgba(15, 23, 42, 0.06);
+}
+
+.form-shell .field-help {
+  color: var(--muted);
+  font-size: 0.94rem;
+  line-height: 1.45;
+}
+
+.form-shell .field-error {
+  color: #b42318;
+  font-size: 0.9rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.form-shell .field-error:empty {
+  display: none;
+}
+
+.form-shell .check-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem;
+  color: var(--text);
+  font-weight: 700;
+  line-height: 1.5;
+  background: linear-gradient(135deg, rgba(255, 247, 237, 0.9), rgba(248, 250, 252, 0.9));
+  border: 1px solid rgba(249, 115, 22, 0.18);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+.form-shell .check-row input {
+  flex: 0 0 auto;
+  width: 1.15rem;
+  height: 1.15rem;
+  min-height: 0;
+  margin-top: 0.2rem;
+  accent-color: var(--orange);
+}
+
+.form-shell .form-submit-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.9rem 1rem;
+}
+
+.form-shell .form-submit-row .button {
+  min-width: min(100%, 230px);
+  cursor: pointer;
+}
+
+.form-shell .form-status {
+  flex: 1 1 220px;
+  color: var(--muted);
+  font-size: 0.94rem;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.form-shell .form-status:empty {
+  display: none;
+}
+
+.form-success {
+  display: grid;
+  gap: 0.75rem;
+  padding: 2rem;
+  background:
+    linear-gradient(135deg, rgba(238, 246, 245, 0.96), rgba(255, 255, 255, 0.96));
+  border: 1px solid rgba(15, 118, 110, 0.22);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-strong);
+}
+
+.form-success h2 {
+  font-size: 1.5rem;
+}
+
+.form-layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.7fr) minmax(360px, 1.3fr);
+  gap: clamp(2rem, 5vw, 3.5rem);
+  align-items: start;
+}
+
+.form-aside {
+  position: sticky;
+  top: 112px;
+  display: grid;
+  gap: 1.35rem;
+}
+
+@media (max-width: 1100px) {
+  .page-hero-grid,
+  .split-grid,
+  .guideline-grid,
+  .tier-grid,
+  .gallery-grid,
+  .form-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .form-aside {
+    position: static;
+  }
+
+  .gallery-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .gallery-grid,
+  .form-shell .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .event-card {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    text-align: left;
+  }
+
+  .event-date {
+    justify-self: start;
+  }
+
+  .form-shell .form-submit-row,
+  .form-shell .form-submit-row .button {
     width: 100%;
   }
 }

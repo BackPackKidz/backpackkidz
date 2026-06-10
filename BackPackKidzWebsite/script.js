@@ -441,3 +441,165 @@ if (desktopQuery.addEventListener) {
 
 updateFloatingDonate();
 updateParallax();
+
+/* =========================
+   Reusable API forms
+   Wires Contact, Volunteer, and Sponsorship pages to their Netlify
+   functions. Each form opts in with [data-api-form] and posts its
+   fields (by name) as JSON. The donation form keeps its own handler.
+========================= */
+
+const fieldErrorMessages = {
+  email: "Enter a valid email address.",
+};
+
+const setApiFieldErrors = (form, fields = []) => {
+  form.querySelectorAll("[data-error-for]").forEach((node) => {
+    node.textContent = "";
+  });
+  form.querySelectorAll("[aria-invalid='true']").forEach((field) => {
+    field.removeAttribute("aria-invalid");
+  });
+
+  fields.forEach((name) => {
+    const node = form.querySelector(`[data-error-for="${name}"]`);
+    const field = form.elements[name];
+
+    if (node) {
+      node.textContent = fieldErrorMessages[name] || "Please complete this field.";
+    }
+
+    if (field instanceof HTMLElement) {
+      field.setAttribute("aria-invalid", "true");
+    }
+  });
+};
+
+const serializeApiForm = (form) => {
+  const payload = {};
+
+  new FormData(form).forEach((value, key) => {
+    if (key in payload) {
+      payload[key] = [].concat(payload[key], value);
+    } else {
+      payload[key] = value;
+    }
+  });
+
+  return payload;
+};
+
+document.querySelectorAll("[data-api-form]").forEach((form) => {
+  if (!(form instanceof HTMLFormElement)) {
+    return;
+  }
+
+  const endpoint = form.getAttribute("action") || form.dataset.endpoint;
+  const statusNode = form.querySelector("[data-form-status]");
+  const successPanel = form.parentElement?.querySelector("[data-form-success]");
+  const submitButton = form.querySelector("[type='submit']");
+  let isSubmitting = false;
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    if (isSubmitting || !endpoint) {
+      return;
+    }
+
+    // Let the browser surface its native required-field messages first.
+    if (typeof form.reportValidity === "function" && !form.reportValidity()) {
+      return;
+    }
+
+    isSubmitting = true;
+
+    if (submitButton instanceof HTMLButtonElement) {
+      submitButton.disabled = true;
+    }
+
+    if (statusNode) {
+      statusNode.textContent = "Sending...";
+    }
+
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(serializeApiForm(form)),
+      });
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        if (Array.isArray(data.fields) && data.fields.length > 0) {
+          setApiFieldErrors(form, data.fields);
+          const firstField = form.elements[data.fields[0]];
+
+          if (firstField instanceof HTMLElement) {
+            firstField.focus();
+          }
+        }
+
+        throw new Error(
+          data.error || "Something went wrong. Please try again."
+        );
+      }
+
+      setApiFieldErrors(form, []);
+      form.reset();
+
+      if (successPanel instanceof HTMLElement) {
+        form.hidden = true;
+        successPanel.hidden = false;
+        successPanel.setAttribute("tabindex", "-1");
+        successPanel.focus();
+      } else if (statusNode) {
+        statusNode.textContent = "Thank you! Your message has been sent.";
+      }
+    } catch (error) {
+      if (statusNode) {
+        statusNode.textContent =
+          error.message || "Something went wrong. Please try again.";
+      }
+    } finally {
+      isSubmitting = false;
+
+      if (submitButton instanceof HTMLButtonElement) {
+        submitButton.disabled = false;
+      }
+    }
+  });
+});
+
+/* =========================
+   Sponsorship cost estimate
+   Mirrors the server-side COST_PER_CHILD so the Sponsor page can show a
+   live yearly total. Owner should confirm the per-child amount.
+========================= */
+
+const sponsorCalc = document.querySelector("[data-sponsor-calc]");
+
+if (sponsorCalc) {
+  const costPerChild = Number(sponsorCalc.dataset.costPerChild || 160);
+  const countInput = sponsorCalc.querySelector("[data-sponsor-count]");
+  const totalOutput = sponsorCalc.querySelector("[data-sponsor-total]");
+
+  const formatUsd = (value) =>
+    value.toLocaleString("en-US", {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0,
+    });
+
+  const updateSponsorTotal = () => {
+    const count = Math.max(0, Math.floor(Number(countInput?.value) || 0));
+
+    if (totalOutput) {
+      totalOutput.textContent =
+        count > 0 ? formatUsd(count * costPerChild) : formatUsd(0);
+    }
+  };
+
+  countInput?.addEventListener("input", updateSponsorTotal);
+  updateSponsorTotal();
+}
