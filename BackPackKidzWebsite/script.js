@@ -12,10 +12,13 @@ const revealItems = Array.from(document.querySelectorAll("[data-reveal]"));
 const floatingDonate = document.querySelector(".floating-donate");
 const donationForm = document.querySelector("[data-donation-form]");
 const exportForm = document.querySelector("[data-export-form]");
+<<<<<<< HEAD
 
 /* =========================
    Navigation
 ========================= */
+=======
+>>>>>>> b9839589199d00b0085166846fcf64ef9b605bf7
 
 const setNavigationState = (isOpen) => {
   if (!siteHeader || !navToggle || !navToggleLabel) {
@@ -73,10 +76,13 @@ if (siteHeader && navToggle && navPanel) {
   }
 }
 
+<<<<<<< HEAD
 /* =========================
    Donation links
 ========================= */
 
+=======
+>>>>>>> b9839589199d00b0085166846fcf64ef9b605bf7
 document.querySelectorAll("[data-donate-link]").forEach((donateLink) => {
   if (donateLink instanceof HTMLAnchorElement) {
     donateLink.href = donatePageUrl;
@@ -338,10 +344,13 @@ if (exportForm instanceof HTMLFormElement) {
     }
   });
 }
+<<<<<<< HEAD
 
 /* =========================
    Reveal animations
 ========================= */
+=======
+>>>>>>> b9839589199d00b0085166846fcf64ef9b605bf7
 
 if (revealItems.length > 0) {
   if (!reducedMotionQuery.matches) {
