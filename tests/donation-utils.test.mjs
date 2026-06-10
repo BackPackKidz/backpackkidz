@@ -2,80 +2,113 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
   createDonationRecord,
-  flattenDonationRecord,
   recordsToCsv,
 } from "../netlify/donation-utils.mjs";
 
-test("creates a pending PayPal donation record with thank-you tracking", () => {
+test("creates a flat donation record with all submitted fields", () => {
   const result = createDonationRecord(
     {
-      donor_type: "Individual",
-      donor_name: "Jane Donor",
-      email: "Jane@example.com",
+      donorType: "Individual",
       amount: "25.50",
-      address: "123 Main Street",
-      wants_thank_you_gift_or_card: true,
-      public_recognition_allowed: true,
-      source_campaign: "Website Donation",
+      donorName: "Jane Donor",
+      organizationName: "Jane's Helpers",
+      email: "Jane@example.com",
+      phone: "555-0100",
+      mailingAddress: "123 Main Street",
+      city: "Punta Gorda",
+      state: "FL",
+      zip: "33950",
+      sourceCampaign: "Website Donation",
+      inHonorMemory: true,
+      honorType: "in honor of",
+      honoreeName: "A Kind Teacher",
+      honorMessage: "Thank you.",
     },
     new Date("2026-06-09T12:00:00.000Z")
   );
 
-  assert.equal(result.errors, undefined);
-  assert.equal(result.record.donor.email, "jane@example.com");
-  assert.equal(result.record.donation.amount, 25.5);
-  assert.equal(result.record.donation.payment_provider, "PayPal");
-  assert.equal(result.record.donation.payment_status, "pending_payment");
-  assert.equal(result.record.thank_you_tracking.thank_you_card_needed, true);
-  assert.equal(result.record.thank_you_tracking.thank_you_gift_needed, true);
+  assert.equal(result.error, undefined);
+  assert.match(result.record.id, /^[0-9a-f-]{36}$/i);
+  assert.equal(result.record.submittedAt, "2026-06-09T12:00:00.000Z");
+  assert.equal(result.record.donorType, "Individual");
+  assert.equal(result.record.amount, 25.5);
+  assert.equal(result.record.donorName, "Jane Donor");
+  assert.equal(result.record.organizationName, "Jane's Helpers");
+  assert.equal(result.record.email, "jane@example.com");
+  assert.equal(result.record.phone, "555-0100");
+  assert.equal(result.record.mailingAddress, "123 Main Street");
+  assert.equal(result.record.city, "Punta Gorda");
+  assert.equal(result.record.state, "FL");
+  assert.equal(result.record.zip, "33950");
+  assert.equal(result.record.sourceCampaign, "Website Donation");
+  assert.equal(result.record.inHonorMemory, true);
+  assert.equal(result.record.honorType, "in honor of");
+  assert.equal(result.record.honoreeName, "A Kind Teacher");
+  assert.equal(result.record.honorMessage, "Thank you.");
 });
 
-test("rejects missing identity, invalid email, and non-positive amount", () => {
+test("allows donor email to be omitted", () => {
   const result = createDonationRecord({
-    donor_type: "Individual",
-    email: "not-an-email",
+    donorType: "Business",
+    organizationName: "Local Helper LLC",
+    amount: "100",
+  });
+
+  assert.equal(result.error, undefined);
+  assert.equal(result.record.email, "");
+  assert.equal(result.record.amount, 100);
+});
+
+test("rejects invalid amount", () => {
+  const result = createDonationRecord({
+    donorType: "Individual",
+    donorName: "Jane Donor",
     amount: "0",
   });
 
-  assert.equal(result.errors.length, 3);
-  assert.deepEqual(
-    result.errors.map((error) => error.field),
-    ["donor_name", "email", "amount"]
-  );
+  assert.equal(result.error, "Donation submission is missing required information.");
+  assert.deepEqual(result.fields, ["amount"]);
+});
+
+test("rejects missing donor and organization identity", () => {
+  const result = createDonationRecord({
+    donorType: "Individual",
+    amount: "25",
+  });
+
+  assert.equal(result.error, "Donation submission is missing required information.");
+  assert.deepEqual(result.fields, ["donorName", "organizationName"]);
 });
 
 test("requires honoree name when honor or memory option is selected", () => {
   const result = createDonationRecord({
-    donor_type: "Business",
-    business_or_organization_name: "Local Helper LLC",
-    email: "hello@example.com",
+    donorType: "Business",
+    organizationName: "Local Helper LLC",
     amount: "100",
-    in_honor_enabled: true,
-    honor_type: "in memory of",
+    inHonorMemory: true,
+    honorType: "in memory of",
   });
 
-  assert.equal(result.errors.length, 1);
-  assert.equal(result.errors[0].field, "honoree_name");
+  assert.equal(result.error, "Donation submission is missing required information.");
+  assert.deepEqual(result.fields, ["honoreeName"]);
 });
 
-test("exports donation records as escaped CSV", () => {
+test("exports flat donation records as escaped CSV", () => {
   const { record } = createDonationRecord(
     {
-      donor_type: "Organization",
-      business_or_organization_name: "Friends, Inc.",
-      email: "friends@example.com",
+      donorType: "Organization",
+      organizationName: "Friends, Inc.",
       amount: "10",
-      in_honor_enabled: true,
-      honoree_name: "A Kind Neighbor",
-      honor_message: "Thank you, always.",
+      inHonorMemory: true,
+      honoreeName: "A Kind Neighbor",
+      honorMessage: "Thank you, always.",
     },
     new Date("2026-06-09T12:00:00.000Z")
   );
 
   const csv = recordsToCsv([record]);
-  const flat = flattenDonationRecord(record);
 
+  assert.match(csv, /^id,submittedAt,donorType,amount,donorName,/);
   assert.match(csv, /"Friends, Inc\."/);
-  assert.equal(flat.payment_status, "pending_payment");
-  assert.equal(flat.in_honor_enabled, true);
+  assert.match(csv, /"Thank you, always\."/);
 });

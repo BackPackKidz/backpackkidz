@@ -36,17 +36,17 @@ export default async (request) => {
     return unauthorized();
   }
 
-  const store = getStore({ name: "donation-records", consistency: "strong" });
+  const store = getStore("donations");
 
   try {
-    const { blobs } = await store.list({ prefix: "donations/" });
+    const { blobs } = await store.list();
     const records = (
       await Promise.all(
-        blobs.map((blob) => store.get(blob.key, { type: "json", consistency: "strong" }))
+        blobs.map((blob) => store.get(blob.key, { type: "json" }))
       )
     )
       .filter(Boolean)
-      .sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)));
+      .sort((a, b) => String(b.submittedAt).localeCompare(String(a.submittedAt)));
 
     const csv = recordsToCsv(records);
     const filename = `backpack-kidz-donations-${new Date()

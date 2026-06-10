@@ -1,11 +1,8 @@
 [build]
-  command = "npm run build"
-  publish = "."
-
-[functions]
-  directory = "netlify/functions"
-
-[dev]
-  command = "npm run dev"
-  publish = "."
+  publish = "BackPackKidzWebsite"
   functions = "netlify/functions"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
