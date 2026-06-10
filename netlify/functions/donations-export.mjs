@@ -32,7 +32,11 @@ export default async (request) => {
     );
   }
 
-  if (getBearerToken(request) !== expectedToken) {
+  const url = new URL(request.url);
+  const queryToken = url.searchParams.get("token") || "";
+  const bearerToken = getBearerToken(request);
+  const providedToken = bearerToken || queryToken;
+  if (providedToken !== expectedToken) {
     return unauthorized();
   }
 
