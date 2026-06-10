@@ -6,5 +6,6 @@
   directory = "netlify/functions"
 
 [dev]
+  command = "npm run dev"
   publish = "BackPackKidzWebsite"
   functions = "netlify/functions"
