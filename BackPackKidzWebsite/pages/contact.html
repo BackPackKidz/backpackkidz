@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+      name="description"
+      content="Contact Back Pack Kidz in Charlotte County, Florida — ask a question, request a speaker, start a food drive, or learn how to help fight weekend childhood hunger."
+    >
+    <title>Contact | Back Pack Kidz</title>
+    <link rel="icon" href="../assets/backpack-kidz-logo.png">
+    <link rel="stylesheet" href="../style.css">
+    <script src="../script.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="navbar" aria-label="Primary navigation">
+        <a href="/" class="nav-logo" aria-label="Back Pack Kidz Home">
+          <img
+            class="logo-image"
+            src="../assets/backpack-kidz-logo.png"
+            alt=""
+            width="42"
+            height="42"
+          >
+          <span class="logo-text">Back Pack Kidz</span>
+        </a>
+
+        <button
+          class="nav-toggle"
+          type="button"
+          aria-controls="primary-navigation"
+          aria-expanded="false"
+        >
+          <span class="sr-only">Open navigation menu</span>
+          <span class="nav-toggle-bars" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </button>
+
+        <div class="nav-panel" id="primary-navigation">
+          <ul class="nav-menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/pages/about.html">About</a></li>
+            <li><a href="/pages/programs.html">Programs</a></li>
+            <li><a href="/pages/sponsor.html">Sponsor</a></li>
+            <li><a href="/pages/gallery.html">Gallery</a></li>
+            <li><a href="/pages/our-partners.html">Our Partners</a></li>
+            <li><a href="/pages/contact.html" aria-current="page">Contact</a></li>
+          </ul>
+
+          <div class="nav-actions">
+            <a href="/pages/get-involved.html" class="nav-link-secondary">Get Involved</a>
+            <a href="/pages/donate.html" class="nav-cta" data-donate-link>Donate Now</a>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main id="content">
+      <section class="page-hero section" data-parallax-section>
+        <div class="hero-texture" aria-hidden="true"></div>
+        <div class="section-inner page-hero-grid">
+          <div class="page-hero-copy" data-reveal>
+            <p class="eyebrow">Contact</p>
+            <h1>Let's talk about feeding kids.</h1>
+            <p class="lede">
+              Whether you want to volunteer, donate, host a food drive, partner
+              with us, or invite a speaker, we'd love to hear from you. Send a
+              message and a member of the Back Pack Kidz team will be in touch.
+            </p>
+            <div class="button-row">
+              <a href="#contact-form" class="button button-primary">Send a Message</a>
+              <a href="/pages/donate.html" class="button button-secondary" data-donate-link>Donate Now</a>
+            </div>
+          </div>
+
+          <aside class="page-hero-aside" data-reveal>
+            <h2>Reach us</h2>
+            <p>
+              <a href="mailto:info@backpackkidz.com">info@backpackkidz.com</a>
+            </p>
+            <p class="aside-stat">
+              <strong>Charlotte County</strong>
+              <span>Florida</span>
+            </p>
+            <!-- TODO (owner): Add a phone number and mailing address here if you
+                 would like them shown publicly. -->
+          </aside>
+        </div>
+      </section>
+
+      <section class="section" id="contact-form" aria-labelledby="contact-form-title">
+        <div class="section-inner form-layout">
+          <div class="form-aside" data-reveal>
+            <p class="eyebrow">Send a Message</p>
+            <h2 id="contact-form-title">We read every message.</h2>
+            <p class="lede">
+              Tell us a little about how you'd like to connect, and we'll point
+              you in the right direction.
+            </p>
+            <div class="support-panel" data-reveal>
+              <h3>Looking to give right now?</h3>
+              <p>
+                You can <a href="/pages/donate.html" data-donate-link>make a donation</a>
+                or <a href="/pages/sponsor.html">sponsor a child</a> any time.
+              </p>
+            </div>
+          </div>
+
+          <div data-reveal>
+            <form
+              class="form-shell"
+              data-api-form
+              action="/api/contacts"
+              aria-describedby="contact-form-note"
+            >
+              <p id="contact-form-note" class="field-help">
+                Required fields are marked with <span aria-hidden="true">*</span>.
+              </p>
+
+              <div class="form-grid">
+                <div class="form-field">
+                  <label for="contact-name">Your name <span aria-hidden="true">*</span></label>
+                  <input id="contact-name" name="name" type="text" autocomplete="name" required>
+                  <p class="field-error" data-error-for="name"></p>
+                </div>
+                <div class="form-field">
+                  <label for="contact-email">Email <span aria-hidden="true">*</span></label>
+                  <input id="contact-email" name="email" type="email" autocomplete="email" required>
+                  <p class="field-error" data-error-for="email"></p>
+                </div>
+                <div class="form-field">
+                  <label for="contact-phone">Phone</label>
+                  <input id="contact-phone" name="phone" type="tel" autocomplete="tel">
+                </div>
+                <div class="form-field">
+                  <label for="contact-subject">Subject</label>
+                  <select id="contact-subject" name="subject">
+                    <option value="">Select one</option>
+                    <option>Volunteering</option>
+                    <option>Donations</option>
+                    <option>Sponsor a child</option>
+                    <option>Host a food drive</option>
+                    <option>Partnership</option>
+                    <option>Request a speaker</option>
+                    <option>Something else</option>
+                  </select>
+                </div>
+                <div class="form-field">
+                  <label for="preferredContact">Preferred contact method</label>
+                  <select id="preferredContact" name="preferredContact">
+                    <option value="">No preference</option>
+                    <option>Email</option>
+                    <option>Phone</option>
+                  </select>
+                </div>
+                <div class="form-field form-field-full">
+                  <label for="contact-message">Message <span aria-hidden="true">*</span></label>
+                  <textarea id="contact-message" name="message" rows="5" required></textarea>
+                  <p class="field-error" data-error-for="message"></p>
+                </div>
+              </div>
+
+              <div class="form-submit-row">
+                <button class="button button-primary" type="submit">Send message</button>
+                <p class="form-status" data-form-status role="status" aria-live="polite"></p>
+              </div>
+            </form>
+
+            <div class="form-success" data-form-success hidden>
+              <h2>Message sent — thank you!</h2>
+              <p>
+                We've received your message and will get back to you as soon as
+                we can. In the meantime, explore more ways to help.
+              </p>
+              <p>
+                <a href="/pages/get-involved.html" class="button button-secondary">Ways to Help</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section difference-section" aria-labelledby="contact-ways-title">
+        <div class="section-inner">
+          <div class="section-heading" data-reveal>
+            <h2 id="contact-ways-title">Other ways to connect</h2>
+            <p>Looking for something specific? Start here.</p>
+          </div>
+
+          <div class="feature-grid">
+            <article class="feature-card" data-reveal>
+              <span class="feature-icon" aria-hidden="true">01</span>
+              <h3>Volunteer</h3>
+              <p>Join a packing day or ongoing volunteer team.</p>
+              <p><a href="/pages/get-involved.html" class="button button-text">Get involved &rarr;</a></p>
+            </article>
+            <article class="feature-card" data-reveal>
+              <span class="feature-icon" aria-hidden="true">02</span>
+              <h3>Sponsor a child</h3>
+              <p>Cover weekend food for a child, class, or grade.</p>
+              <p><a href="/pages/sponsor.html" class="button button-text">Sponsor &rarr;</a></p>
+            </article>
+            <article class="feature-card" data-reveal>
+              <span class="feature-icon" aria-hidden="true">03</span>
+              <h3>Partner with us</h3>
+              <p>Bring your organization alongside the mission.</p>
+              <p><a href="/pages/our-partners.html" class="button button-text">Partner &rarr;</a></p>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <a href="/pages/donate.html" class="floating-donate" data-donate-link>Donate Now</a>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <a href="/" class="footer-logo" aria-label="Back Pack Kidz Home">
+            <img src="../assets/backpack-kidz-logo.png" alt="" width="44" height="44" loading="lazy">
+            <span>Back Pack Kidz</span>
+          </a>
+          <p>
+            Fueling futures and fighting weekend hunger — one child, one
+            weekend at a time — through the power of community in Charlotte
+            County.
+          </p>
+          <!-- TODO: Replace these placeholder social links with the official
+               Back Pack Kidz Facebook, X/Twitter, and Instagram URLs. -->
+          <div class="social-links" aria-label="Social links">
+            <a href="/pages/contact.html">Facebook</a>
+            <a href="/pages/contact.html">Twitter</a>
+            <a href="/pages/contact.html">Instagram</a>
+          </div>
+        </div>
+
+        <div class="footer-column">
+          <h2>Quick Links</h2>
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/pages/about.html">About</a></li>
+            <li><a href="/pages/programs.html">Programs</a></li>
+            <li><a href="/pages/gallery.html">Gallery</a></li>
+            <li><a href="/pages/faq.html">FAQ</a></li>
+            <li><a href="/pages/future-events.html">Events</a></li>
+            <li><a href="/pages/contact.html">Contact</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-column">
+          <h2>Get Involved</h2>
+          <ul>
+            <li><a href="/pages/get-involved.html">Volunteer</a></li>
+            <li><a href="/pages/donate.html" data-donate-link>Make a Donation</a></li>
+            <li><a href="/pages/sponsor.html">Sponsor a Child</a></li>
+            <li><a href="/pages/our-partners.html">Partner with Us</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-column">
+          <h2>Contact Us</h2>
+          <ul>
+            <li><a href="mailto:info@backpackkidz.com">info@backpackkidz.com</a></li>
+            <li>Charlotte County, Florida</li>
+          </ul>
+          <a href="/pages/contact.html" class="footer-cta">Make A Difference Today</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>Copyright &copy; 2026 The Back Pack Kidz | Powered by The Back Pack Kidz</p>
+      </div>
+    </footer>
+  </body>
+</html>

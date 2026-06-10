@@ -43,15 +43,16 @@
         <div class="nav-panel" id="primary-navigation">
           <ul class="nav-menu">
             <li><a href="/">Home</a></li>
-            <li><a href="/pages/about-page/">About</a></li>
-            <li><a href="/pages/program-page/">Programs</a></li>
-            <li><a href="/pages/gallery/">Gallery</a></li>
-            <li><a href="/pages/contact-page/">Contact</a></li>
+            <li><a href="/pages/about.html">About</a></li>
+            <li><a href="/pages/programs.html">Programs</a></li>
+            <li><a href="/pages/sponsor.html">Sponsor</a></li>
+            <li><a href="/pages/gallery.html">Gallery</a></li>
             <li><a href="/pages/our-partners.html">Our Partners</a></li>
+            <li><a href="/pages/contact.html">Contact</a></li>
           </ul>
 
           <div class="nav-actions">
-            <a href="/pages/contact-page/" class="nav-link-secondary">Get Involved</a>
+            <a href="/pages/get-involved.html" class="nav-link-secondary">Get Involved</a>
             <a
               href="/pages/donate.html"
               class="nav-cta"
@@ -240,6 +241,75 @@
           </div>
         </div>
       </section>
+
+      <!--
+        TODO (owner): Confirm the current "feed a child for a school year"
+        amount. The codebase currently uses $160 per child
+        (see netlify/sponsorship-utils.mjs -> COST_PER_CHILD). The cards
+        below reflect that figure; update both places if it changes.
+      -->
+      <section class="section faq-section" aria-labelledby="donation-impact-title">
+        <div class="section-inner">
+          <div class="section-heading" data-reveal>
+            <h2 id="donation-impact-title">Ways your gift helps</h2>
+            <p>
+              Every donation turns into kid-friendly food for a child facing a
+              long, hungry weekend. Here is what your support can make possible.
+            </p>
+          </div>
+
+          <div class="feature-grid">
+            <article class="feature-card" data-reveal>
+              <span class="feature-icon" aria-hidden="true">$160</span>
+              <h3>Feed one child</h3>
+              <p>
+                Around $160 helps provide weekend food for one child across a
+                full school year.
+              </p>
+            </article>
+            <article class="feature-card" data-reveal>
+              <span class="feature-icon" aria-hidden="true">×</span>
+              <h3>Sponsor multiple children</h3>
+              <p>
+                Multiply your impact by supporting several children, a class, or
+                a whole grade level.
+              </p>
+            </article>
+            <article class="feature-card" data-reveal>
+              <span class="feature-icon" aria-hidden="true">Bag</span>
+              <h3>Support weekend bags</h3>
+              <p>
+                Help stock the sealed, easy-open, kid-friendly food that fills
+                each weekend bag.
+              </p>
+            </article>
+            <article class="feature-card" data-reveal>
+              <span class="feature-icon" aria-hidden="true">Pantry</span>
+              <h3>Help stock school pantries</h3>
+              <p>
+                Keep middle and high school pantries supplied with food and basic
+                hygiene items for older students.
+              </p>
+            </article>
+            <article class="feature-card" data-reveal>
+              <span class="feature-icon" aria-hidden="true">Honor</span>
+              <h3>Give in honor of someone</h3>
+              <p>
+                Celebrate a birthday, a teacher, or a loved one's memory with a
+                gift that feeds local children.
+              </p>
+            </article>
+            <article class="feature-card" data-reveal>
+              <span class="feature-icon" aria-hidden="true">Monthly</span>
+              <h3>Give monthly</h3>
+              <p>
+                Steady monthly support helps volunteers plan ahead so no weekend
+                goes unfilled.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
     </main>
 
     <footer class="site-footer">
@@ -250,13 +320,16 @@
             <span>Back Pack Kidz</span>
           </a>
           <p>
-            Fueling futures and fighting weekend hunger-one child, one weekend
-            at a time-through the power of community in Charlotte County
+            Fueling futures and fighting weekend hunger — one child, one
+            weekend at a time — through the power of community in Charlotte
+            County.
           </p>
+          <!-- TODO: Replace these placeholder social links with the official
+               Back Pack Kidz Facebook, X/Twitter, and Instagram URLs. -->
           <div class="social-links" aria-label="Social links">
-            <a href="/pages/contact-page/">Facebook</a>
-            <a href="/pages/contact-page/">Twitter</a>
-            <a href="/pages/contact-page/">Instagram</a>
+            <a href="/pages/contact.html">Facebook</a>
+            <a href="/pages/contact.html">Twitter</a>
+            <a href="/pages/contact.html">Instagram</a>
           </div>
         </div>
 
@@ -264,20 +337,22 @@
           <h2>Quick Links</h2>
           <ul>
             <li><a href="/">Home</a></li>
-            <li><a href="/about-page/">About</a></li>
-            <li><a href="/program-page/">Programs</a></li>
-            <li><a href="/gallery/">Gallery</a></li>
-            <li><a href="/contact-page/">Contact</a></li>
+            <li><a href="/pages/about.html">About</a></li>
+            <li><a href="/pages/programs.html">Programs</a></li>
+            <li><a href="/pages/gallery.html">Gallery</a></li>
+            <li><a href="/pages/faq.html">FAQ</a></li>
+            <li><a href="/pages/future-events.html">Events</a></li>
+            <li><a href="/pages/contact.html">Contact</a></li>
           </ul>
         </div>
 
         <div class="footer-column">
           <h2>Get Involved</h2>
           <ul>
-            <li><a href="/contact-page/">Volunteer</a></li>
+            <li><a href="/pages/get-involved.html">Volunteer</a></li>
             <li><a href="/pages/donate.html" data-donate-link>Make a Donation</a></li>
-            <li><a href="/contact-page/">Sponsor a Child</a></li>
-            <li><a href="/contact-page/">Partner with Us</a></li>
+            <li><a href="/pages/sponsor.html">Sponsor a Child</a></li>
+            <li><a href="/pages/our-partners.html">Partner with Us</a></li>
           </ul>
         </div>
 
@@ -287,7 +362,7 @@
             <li><a href="mailto:info@backpackkidz.com">info@backpackkidz.com</a></li>
             <li>Charlotte County, Florida</li>
           </ul>
-          <a href="/contact-page/" class="footer-cta">Make A Difference Today</a>
+          <a href="/pages/contact.html" class="footer-cta">Make A Difference Today</a>
         </div>
       </div>
       <div class="footer-bottom">
