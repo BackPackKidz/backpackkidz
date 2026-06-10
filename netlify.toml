@@ -1,4 +1,5 @@
 [build]
+<<<<<<< HEAD
   command = "npm run build"
   publish = "BackPackKidzWebsite"
   functions = "netlify/functions"
@@ -6,3 +7,11 @@
 [dev]
   publish = "BackPackKidzWebsite"
   functions = "netlify/functions"
+=======
+  base = "BackPackKidzWebsite"
+  command = "npm run build"
+  publish = "."
+
+[functions]
+  directory = "netlify/functions"
+>>>>>>> 30e6fe9012249aaa5cd7b82acbd2a54a53a17e66
