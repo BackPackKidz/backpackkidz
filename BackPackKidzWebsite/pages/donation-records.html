@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>Donation Records Export | Backpack Kidz</title>
+    <link rel="icon" href="../assets/backpack-kidz-logo.png">
+    <link rel="stylesheet" href="../style.css">
+    <script src="../script.js" defer></script>
+  </head>
+  <body class="donation-records-page">
+    <main id="content">
+      <section class="section internal-export-section" aria-labelledby="export-title">
+        <div class="section-inner internal-export-wrap">
+          <div class="section-heading section-heading-left">
+            <p class="eyebrow">Internal export</p>
+            <h1 id="export-title">Donation Records</h1>
+            <p>
+              Download private donation records as CSV. This page is not linked
+              publicly, and the export endpoint requires the Netlify
+              <code>DONATIONS_EXPORT_TOKEN</code>.
+            </p>
+          </div>
+
+          <form class="donation-form internal-export-form" data-export-form>
+            <div class="form-field">
+              <label for="export_token">Export token</label>
+              <input
+                id="export_token"
+                name="export_token"
+                type="password"
+                autocomplete="off"
+                required
+              >
+            </div>
+            <div class="form-submit-row">
+              <button class="button button-primary" type="submit">Download CSV</button>
+              <p class="form-status" data-export-status role="status" aria-live="polite"></p>
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
