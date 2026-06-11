@@ -1934,6 +1934,16 @@ h3 {
   font-size: 1.35rem;
 }
 
+.donate-page .donation-trust-list {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0;
+  padding-left: 1.1rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
 .donate-page .donation-form-panel {
   position: relative;
   overflow: hidden;
