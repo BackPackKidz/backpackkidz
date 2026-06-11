@@ -1948,6 +1948,12 @@ h3 {
   border-bottom: 1px solid var(--border);
 }
 
+.donate-page .form-section-heading h2 small {
+  font-size: 0.6em;
+  font-weight: 600;
+  color: var(--muted);
+}
+
 .donate-page .form-section-heading h2 {
   font-size: clamp(1.65rem, 3vw, 2.15rem);
 }
