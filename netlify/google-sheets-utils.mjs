@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { getGooglePrivateKey, googleSheetsConfigStatus } from "./config-utils.mjs";
 
 /*
   Google Sheets bookkeeping for donations.
@@ -45,15 +46,11 @@ export const DONATION_SHEET_HEADERS = [
   "Completed At",
 ];
 
-const spreadsheetId = () => process.env.GOOGLE_SHEETS_SPREADSHEET_ID;
-const sheetTab = () => process.env.GOOGLE_SHEETS_TAB || "Donations";
+const spreadsheetId = () => googleSheetsConfigStatus().spreadsheetId;
+const sheetTab = () => googleSheetsConfigStatus().tab;
 
 export const isSheetsConfigured = () =>
-  Boolean(
-    process.env.GOOGLE_SHEETS_SPREADSHEET_ID &&
-      process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL &&
-      process.env.GOOGLE_PRIVATE_KEY
-  );
+  googleSheetsConfigStatus().configured;
 
 /* Exchange a self-signed service-account JWT for a short-lived access token.
    This avoids pulling in the (very large) googleapis package. */
@@ -69,7 +66,7 @@ const getAccessToken = async () => {
     exp: now + 3600,
   })}`;
 
-  const privateKey = process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n");
+  const privateKey = getGooglePrivateKey();
   const signature = crypto
     .createSign("RSA-SHA256")
     .update(unsigned)

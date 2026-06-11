@@ -5,6 +5,7 @@ import {
   markDonationCompletedInSheet,
   appendUnmatchedCompletedRow,
 } from "../google-sheets-utils.mjs";
+import { paypalBusiness, paypalExpectedReceiver } from "../config-utils.mjs";
 
 /*
   PayPal IPN (Instant Payment Notification) listener.
@@ -98,7 +99,15 @@ export default async (request) => {
   }
 
   // Optional safety check that the money went to OUR PayPal account.
-  const expectedReceiver = (process.env.PAYPAL_RECEIVER_EMAIL || "").toLowerCase();
+  // PAYPAL_BUSINESS is the standard setup variable; PAYPAL_RECEIVER_EMAIL
+  // remains supported as a backward-compatible override.
+  if (!paypalBusiness()) {
+    console.warn(
+      "PayPal IPN: PAYPAL_BUSINESS is not configured; receiver matching is limited to PAYPAL_RECEIVER_EMAIL if set."
+    );
+  }
+
+  const expectedReceiver = paypalExpectedReceiver().toLowerCase();
 
   if (expectedReceiver) {
     const receiver = (
@@ -108,7 +117,7 @@ export default async (request) => {
     ).toLowerCase();
 
     if (receiver !== expectedReceiver) {
-      console.error(`PayPal IPN: receiver mismatch ("${receiver}"); ignoring.`);
+      console.error("PayPal IPN: receiver mismatch; ignoring.");
       return ok();
     }
   }
