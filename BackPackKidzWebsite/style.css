@@ -17,6 +17,7 @@
   --radius-lg: 24px;
   --max-width: 1240px;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --header-height: 82px;
 }
 
 * {
@@ -26,6 +27,7 @@
 html {
   min-height: 100%;
   scroll-behavior: smooth;
+  scroll-padding-top: var(--header-height);
 }
 
 body {
@@ -1539,6 +1541,82 @@ h3 {
   .mission-panel,
   .trust-panel {
     justify-items: start;
+  }
+}
+
+/* Contact/form specific responsive tweaks */
+@media (max-width: 900px) {
+  /* Ensure the aside stacks cleanly and doesn't use sticky space */
+  .form-aside {
+    position: static;
+    top: auto;
+  }
+
+  .form-layout {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .form-shell {
+    padding: 1.1rem;
+  }
+
+  /* Make the submit button easier to tap and avoid overflow */
+  .form-shell .form-submit-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    align-items: stretch;
+  }
+
+  .form-shell .form-submit-row .button {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .form-success:not([hidden]) {
+    margin-top: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --header-height: 72px;
+  }
+
+  .form-shell {
+    padding: 0.9rem;
+  }
+
+  .form-shell input,
+  .form-shell select,
+  .form-shell textarea {
+    min-height: 50px;
+    padding: 0.7rem 0.9rem;
+    font-size: 0.98rem;
+  }
+
+  .form-shell .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-success {
+    padding: 1rem;
+  }
+
+  /* Hide floating donate on small screens so it doesn't block form fields */
+  .floating-donate {
+    display: none !important;
+  }
+
+  /* Make sure nav panel accounts for sticky header when opened */
+  .nav-panel {
+    top: calc(var(--header-height));
+  }
+
+  /* Prevent accidental horizontal scroll from large radius or shadows */
+  html, body {
+    overflow-x: hidden;
   }
 }
 
