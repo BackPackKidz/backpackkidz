@@ -1,5 +1,6 @@
 import { getStore } from "@netlify/blobs";
 import { createDonationRecord } from "../donation-utils.mjs";
+import { sendNotificationEmail } from "../email-utils.mjs";
 
 const jsonResponse = (body, status = 200) =>
   Response.json(body, {
@@ -49,6 +50,15 @@ export default async (request) => {
     console.error("Donation record save failed:", error);
     return jsonResponse({ error: "Failed to save donation." }, 500);
   }
+
+  // Fail-soft: the record is already saved; a failed email only logs.
+  await sendNotificationEmail({
+    recordType: "donation",
+    subject: `New donation info: $${record.amount} from ${
+      record.donorName || record.organizationName
+    }`,
+    record,
+  });
 
   return jsonResponse({ success: true });
 };

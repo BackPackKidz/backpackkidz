@@ -1,5 +1,6 @@
 import { getStore } from "@netlify/blobs";
 import { createVolunteerRecord } from "../volunteer-utils.mjs";
+import { sendNotificationEmail } from "../email-utils.mjs";
 
 const jsonResponse = (body, status = 200) =>
   Response.json(body, {
@@ -49,6 +50,13 @@ export default async (request) => {
     console.error("Volunteer record save failed:", error);
     return jsonResponse({ error: "Failed to save volunteer." }, 500);
   }
+
+  // Fail-soft: the record is already saved; a failed email only logs.
+  await sendNotificationEmail({
+    recordType: "volunteer",
+    subject: `New volunteer signup from ${record.firstName} ${record.lastName}`,
+    record,
+  });
 
   return jsonResponse({ success: true });
 };

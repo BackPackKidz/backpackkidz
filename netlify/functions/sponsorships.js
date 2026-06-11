@@ -1,5 +1,6 @@
 import { getStore } from "@netlify/blobs";
 import { createSponsorshipRecord } from "../sponsorship-utils.mjs";
+import { sendNotificationEmail } from "../email-utils.mjs";
 
 const jsonResponse = (body, status = 200) =>
   Response.json(body, {
@@ -49,6 +50,15 @@ export default async (request) => {
     console.error("Sponsorship record save failed:", error);
     return jsonResponse({ error: "Failed to save sponsorship." }, 500);
   }
+
+  // Fail-soft: the record is already saved; a failed email only logs.
+  await sendNotificationEmail({
+    recordType: "sponsorship",
+    subject: `New sponsorship request from ${
+      record.sponsorName || record.organizationName
+    }`,
+    record,
+  });
 
   return jsonResponse({ success: true });
 };

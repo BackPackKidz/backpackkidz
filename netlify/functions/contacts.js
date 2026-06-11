@@ -1,5 +1,6 @@
 import { getStore } from "@netlify/blobs";
 import { createContactRecord } from "../contact-utils.mjs";
+import { sendNotificationEmail } from "../email-utils.mjs";
 
 const jsonResponse = (body, status = 200) =>
   Response.json(body, {
@@ -49,6 +50,13 @@ export default async (request) => {
     console.error("Contact record save failed:", error);
     return jsonResponse({ error: "Failed to save contact message." }, 500);
   }
+
+  // Fail-soft: the record is already saved; a failed email only logs.
+  await sendNotificationEmail({
+    recordType: "contact",
+    subject: `New contact message from ${record.name}`,
+    record,
+  });
 
   return jsonResponse({ success: true });
 };
