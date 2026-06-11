@@ -12,7 +12,7 @@ export const sponsorshipFields = [
   "isAnonymous",
 ];
 
-// One child is fed for a full school year for $160.
+// One child is fed for a full school year for $320.
 export const COST_PER_CHILD = 160;
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
