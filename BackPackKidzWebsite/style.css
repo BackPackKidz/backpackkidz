@@ -2713,7 +2713,7 @@ h3 {
 }
 
 .form-success {
-  display: grid;
+  display: none;
   gap: 0.75rem;
   padding: 2rem;
   background:
@@ -2721,6 +2721,13 @@ h3 {
   border: 1px solid rgba(15, 118, 110, 0.22);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-strong);
+}
+
+/* Only show the success panel when it is not hidden. This preserves the
+   semantic `hidden` attribute behavior and avoids author stylesheet from
+   overriding the UA `hidden` display. */
+.form-success:not([hidden]) {
+  display: grid;
 }
 
 .form-success h2 {

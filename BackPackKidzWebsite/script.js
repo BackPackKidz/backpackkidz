@@ -270,9 +270,14 @@ if (donationForm instanceof HTMLFormElement) {
       }
 
       donationForm.hidden = true;
+      if (donationForm instanceof HTMLElement) {
+        donationForm.setAttribute("aria-hidden", "true");
+      }
 
       if (successPanel instanceof HTMLElement) {
         successPanel.hidden = false;
+        successPanel.setAttribute("aria-hidden", "false");
+        successPanel.setAttribute("tabindex", "-1");
         successPanel.focus();
       }
     } catch (error) {
@@ -550,7 +555,10 @@ document.querySelectorAll("[data-api-form]").forEach((form) => {
 
       if (successPanel instanceof HTMLElement) {
         form.hidden = true;
+        form.setAttribute("aria-hidden", "true");
+
         successPanel.hidden = false;
+        successPanel.setAttribute("aria-hidden", "false");
         successPanel.setAttribute("tabindex", "-1");
         successPanel.focus();
       } else if (statusNode) {
