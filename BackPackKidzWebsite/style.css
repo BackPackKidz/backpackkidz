@@ -56,6 +56,13 @@ img {
   height: auto;
 }
 
+/* Elements with the `hidden` attribute must never render, even when an
+   author rule (e.g. `display: grid` on form/success panels) would otherwise
+   override the browser's built-in `[hidden]` display. */
+[hidden] {
+  display: none !important;
+}
+
 a {
   color: inherit;
 }
@@ -1916,8 +1923,10 @@ h3 {
   background: linear-gradient(90deg, var(--orange), var(--green), var(--navy));
 }
 
-.donate-page .donation-form,
-.donate-page .donation-success {
+/* `:not([hidden])` keeps the panels hidden until script.js reveals them,
+   mirroring the .form-success:not([hidden]) pattern used by other forms. */
+.donate-page .donation-form:not([hidden]),
+.donate-page .donation-success:not([hidden]) {
   display: grid;
   gap: 1.5rem;
 }

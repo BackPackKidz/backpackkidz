@@ -6,3 +6,45 @@
   from = "/api/*"
   to = "/.netlify/functions/:splat"
   status = 200
+
+# 301 redirects for old WordPress-era URLs so visitors and search engines
+# land on the current pages instead of outdated or missing content.
+# Specific /about-us/ children must come before the broad /about-us/* rule.
+# NOTE (owner): these only take effect for URLs served by Netlify. If the
+# apex domain (backpackkidz.com) still points at the old WordPress host,
+# update DNS so both apex and www point to Netlify.
+
+[[redirects]]
+  from = "/about-us/how-it-works/*"
+  to = "/pages/programs"
+  status = 301
+
+[[redirects]]
+  from = "/about-us/testimonials/*"
+  to = "/pages/gallery"
+  status = 301
+
+[[redirects]]
+  from = "/about-us/*"
+  to = "/pages/about"
+  status = 301
+
+[[redirects]]
+  from = "/about-page/*"
+  to = "/pages/about"
+  status = 301
+
+[[redirects]]
+  from = "/contact-page/*"
+  to = "/pages/contact"
+  status = 301
+
+[[redirects]]
+  from = "/donate-now/*"
+  to = "/pages/donate"
+  status = 301
+
+[[redirects]]
+  from = "/program-page/*"
+  to = "/pages/programs"
+  status = 301
