@@ -27,6 +27,20 @@ const setNavigationState = (isOpen) => {
   navToggleLabel.textContent = isOpen
     ? "Close navigation menu"
     : "Open navigation menu";
+  // Prevent background scrolling on smaller viewports when nav is open.
+  try {
+    if (!desktopQuery.matches) {
+      if (isOpen) {
+        document.documentElement.style.overflow = "hidden";
+        document.body.style.overflow = "hidden";
+      } else {
+        document.documentElement.style.overflow = "";
+        document.body.style.overflow = "";
+      }
+    }
+  } catch (e) {
+    // ignore (safe fallback)
+  }
 };
 
 if (siteHeader && navToggle && navPanel) {
