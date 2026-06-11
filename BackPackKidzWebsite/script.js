@@ -187,6 +187,10 @@ const setFieldErrors = (form, errors = []) => {
 
   form.querySelectorAll("[aria-invalid='true']").forEach((field) => {
     field.removeAttribute("aria-invalid");
+
+    if (field.getAttribute("aria-describedby")?.startsWith("field-error-")) {
+      field.removeAttribute("aria-describedby");
+    }
   });
 
   errors.forEach((error) => {
@@ -199,6 +203,16 @@ const setFieldErrors = (form, errors = []) => {
 
     if (field instanceof HTMLElement) {
       field.setAttribute("aria-invalid", "true");
+
+      // Tie the visible error text to the field so screen readers
+      // announce it alongside the input.
+      if (errorNode) {
+        if (!errorNode.id) {
+          errorNode.id = `field-error-${error.field}`;
+        }
+
+        field.setAttribute("aria-describedby", errorNode.id);
+      }
     }
   });
 };
@@ -478,6 +492,10 @@ const setApiFieldErrors = (form, fields = []) => {
   });
   form.querySelectorAll("[aria-invalid='true']").forEach((field) => {
     field.removeAttribute("aria-invalid");
+
+    if (field.getAttribute("aria-describedby")?.startsWith("field-error-")) {
+      field.removeAttribute("aria-describedby");
+    }
   });
 
   fields.forEach((name) => {
@@ -490,6 +508,16 @@ const setApiFieldErrors = (form, fields = []) => {
 
     if (field instanceof HTMLElement) {
       field.setAttribute("aria-invalid", "true");
+
+      // Tie the visible error text to the field so screen readers
+      // announce it alongside the input.
+      if (node) {
+        if (!node.id) {
+          node.id = `field-error-${name}`;
+        }
+
+        field.setAttribute("aria-describedby", node.id);
+      }
     }
   });
 };
