@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
   createDonationRecord,
+  donationHonorSummary,
   recordsToCsv,
 } from "../netlify/donation-utils.mjs";
 
@@ -91,6 +92,37 @@ test("requires honoree name when honor or memory option is selected", () => {
 
   assert.equal(result.error, "Donation submission is missing required information.");
   assert.deepEqual(result.fields, ["honoreeName"]);
+});
+
+test("new donation records start as Pending with empty bookkeeping fields", () => {
+  const { record } = createDonationRecord({
+    donorType: "Individual",
+    donorName: "Jane Donor",
+    amount: "25",
+  });
+
+  assert.equal(record.status, "Pending");
+  assert.equal(record.paypalTxnId, "");
+  assert.equal(record.paidAmount, "");
+  assert.equal(record.payerEmail, "");
+  assert.equal(record.completedAt, "");
+});
+
+test("summarizes honor details for bookkeeping and emails", () => {
+  assert.equal(
+    donationHonorSummary({
+      inHonorMemory: true,
+      honorType: "in memory of",
+      honoreeName: "A Kind Teacher",
+      honorMessage: "Thank you.",
+    }),
+    "in memory of A Kind Teacher — Thank you."
+  );
+  assert.equal(
+    donationHonorSummary({ inHonorMemory: true, honoreeName: "A Friend" }),
+    "in honor of A Friend"
+  );
+  assert.equal(donationHonorSummary({ inHonorMemory: false }), "");
 });
 
 test("exports flat donation records as escaped CSV", () => {

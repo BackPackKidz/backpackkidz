@@ -53,13 +53,15 @@ export const formatRecordAsText = (record) =>
     .map(([key, value]) => `${labelize(key)}: ${value}`)
     .join("\n");
 
-export const sendNotificationEmail = async ({ recordType, subject, record }) => {
+/* Generic fail-soft sender: skips with a warning when SMTP is not
+   configured, logs errors instead of throwing. */
+export const sendEmail = async ({ to, subject, text, replyTo }) => {
   const user = process.env.SMTP_USER;
   const pass = process.env.SMTP_PASS;
 
   if (!user || !pass) {
     console.warn(
-      `Email notification skipped for ${recordType}: SMTP_USER/SMTP_PASS are not configured.`
+      `Email skipped ("${subject}"): SMTP_USER/SMTP_PASS are not configured.`
     );
     return { sent: false };
   }
@@ -74,16 +76,24 @@ export const sendNotificationEmail = async ({ recordType, subject, record }) => 
 
     await transporter.sendMail({
       from: process.env.NOTIFY_FROM || user,
-      to: notificationRecipient(recordType),
-      // Reply goes straight to the visitor when they shared an email.
-      replyTo: record.email || undefined,
+      to,
+      replyTo: replyTo || undefined,
       subject,
-      text: `${formatRecordAsText(record)}\n\n—\nSent automatically by the backpackkidz.com website.`,
+      text,
     });
 
     return { sent: true };
   } catch (error) {
-    console.error(`Email notification failed for ${recordType}:`, error);
+    console.error(`Email failed ("${subject}"):`, error);
     return { sent: false };
   }
 };
+
+export const sendNotificationEmail = async ({ recordType, subject, record }) =>
+  sendEmail({
+    to: notificationRecipient(recordType),
+    subject,
+    // Reply goes straight to the visitor when they shared an email.
+    replyTo: record.email,
+    text: `${formatRecordAsText(record)}\n\n—\nSent automatically by the backpackkidz.com website.`,
+  });

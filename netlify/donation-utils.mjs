@@ -16,6 +16,13 @@ export const donationFields = [
   "honorType",
   "honoreeName",
   "honorMessage",
+  // Bookkeeping fields: a record starts "Pending" and is flipped to
+  // "Completed" by the PayPal IPN function once payment is verified.
+  "status",
+  "paypalTxnId",
+  "paidAmount",
+  "payerEmail",
+  "completedAt",
 ];
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -117,8 +124,25 @@ export const createDonationRecord = (input, now = new Date()) => {
       id: crypto.randomUUID(),
       submittedAt: now.toISOString(),
       ...payload,
+      status: "Pending",
+      paypalTxnId: "",
+      paidAmount: "",
+      payerEmail: "",
+      completedAt: "",
     },
   };
+};
+
+/* One-line "in honor of" summary for bookkeeping rows and emails,
+   e.g. "in memory of A Kind Teacher — Thank you." */
+export const donationHonorSummary = (record) => {
+  if (!record?.inHonorMemory || !record.honoreeName) {
+    return "";
+  }
+
+  const summary = `${record.honorType || "in honor of"} ${record.honoreeName}`;
+
+  return record.honorMessage ? `${summary} — ${record.honorMessage}` : summary;
 };
 
 const escapeCsvValue = (value) => {
