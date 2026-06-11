@@ -1944,6 +1944,11 @@ h3 {
   line-height: 1.6;
 }
 
+.donate-page .donation-mailing-address {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
 .donate-page .donation-form-panel {
   position: relative;
   overflow: hidden;

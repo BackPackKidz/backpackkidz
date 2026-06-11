@@ -624,13 +624,13 @@ document.querySelectorAll("[data-api-form]").forEach((form) => {
 /* =========================
    Sponsorship cost estimate
    Mirrors the server-side COST_PER_CHILD so the Sponsor page can show a
-   live yearly total. Owner should confirm the per-child amount.
+   live yearly total ($320 per child per school year, owner confirmed).
 ========================= */
 
 const sponsorCalc = document.querySelector("[data-sponsor-calc]");
 
 if (sponsorCalc) {
-  const costPerChild = Number(sponsorCalc.dataset.costPerChild || 160);
+  const costPerChild = Number(sponsorCalc.dataset.costPerChild || 320);
   const countInput = sponsorCalc.querySelector("[data-sponsor-count]");
   const totalOutput = sponsorCalc.querySelector("[data-sponsor-total]");
 
