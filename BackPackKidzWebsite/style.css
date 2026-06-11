@@ -2216,7 +2216,7 @@ h3 {
   align-content: center;
   padding: 2rem;
   background:
-    linear-gradient(135deg, rgba(23, 37, 84, 0.96), rgba(15, 118, 110, 0.9)),
+    linear-gradient(135deg, var(--navy), #25044e),
     var(--navy);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-strong);
