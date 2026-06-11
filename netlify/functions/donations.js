@@ -76,11 +76,13 @@ export default async (request) => {
   }
 
   // Fail-soft: the record is already saved; a failed email only logs.
+  const donorLabel =
+    record.donorName || record.organizationName || "an anonymous donor";
   await sendNotificationEmail({
     recordType: "donation",
-    subject: `New donation info: $${record.amount} from ${
-      record.donorName || record.organizationName
-    }`,
+    subject: record.amount
+      ? `New donation info: $${record.amount} from ${donorLabel}`
+      : `New donation info from ${donorLabel}`,
     record,
   });
 

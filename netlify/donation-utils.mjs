@@ -64,9 +64,18 @@ export const parseDonationAmount = (value) => {
   return Math.round(amount * 100) / 100;
 };
 
+const normalizeOptionalAmount = (value) => {
+  const amount = parseDonationAmount(value);
+
+  return Number.isFinite(amount) && amount > 0 ? amount : "";
+};
+
 export const normalizeDonationPayload = (payload = {}) => ({
   donorType: singleLine(payload.donorType, 40),
-  amount: parseDonationAmount(payload.amount),
+  // The form no longer collects an amount — donors choose it on PayPal's
+  // page — so a missing/invalid amount is stored as blank, never an error.
+  // The real paid amount is recorded by the IPN handler after confirmation.
+  amount: normalizeOptionalAmount(payload.amount),
   donorName: singleLine(payload.donorName, 160),
   organizationName: singleLine(payload.organizationName, 180),
   email: singleLine(payload.email, 180).toLowerCase(),
@@ -82,27 +91,14 @@ export const normalizeDonationPayload = (payload = {}) => ({
   honorMessage: multiLine(payload.honorMessage, 900),
 });
 
+/* No field is required anymore. The only validation left is a format
+   check on the email — and only when the donor entered one — so a typo'd
+   address doesn't get a thank-you note bounced. */
 export const validateDonationPayload = (payload) => {
   const fields = [];
 
-  if (!payload.donorType) {
-    fields.push("donorType");
-  }
-
-  if (!Number.isFinite(payload.amount) || payload.amount <= 0) {
-    fields.push("amount");
-  }
-
-  if (!payload.donorName && !payload.organizationName) {
-    fields.push("donorName", "organizationName");
-  }
-
   if (payload.email && !EMAIL_PATTERN.test(payload.email)) {
     fields.push("email");
-  }
-
-  if (payload.inHonorMemory && !payload.honoreeName) {
-    fields.push("honoreeName");
   }
 
   return fields;
@@ -114,7 +110,7 @@ export const createDonationRecord = (input, now = new Date()) => {
 
   if (fields.length > 0) {
     return {
-      error: "Donation submission is missing required information.",
+      error: "Please double-check the highlighted fields.",
       fields,
     };
   }

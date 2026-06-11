@@ -123,7 +123,6 @@ const serializeDonationForm = (form) => {
 
   return {
     donorType: formData.get("donor_type") || "",
-    amount: formData.get("amount") || "",
     donorName: formData.get("donor_name") || "",
     organizationName:
       formData.get("business_or_organization_name") || "",
@@ -144,37 +143,14 @@ const serializeDonationForm = (form) => {
 const isValidEmail = (email) =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email));
 
+/* Every donation field is optional; donors choose their amount on
+   PayPal's page. The only check left is a format check on the email,
+   and only when one was entered. */
 const validateDonationClientSide = (payload) => {
   const errors = [];
-  const amount = Number(String(payload.amount).replace(/[$,]/g, ""));
-
-  if (!payload.donorType) {
-    errors.push({ field: "donor_type", message: "Choose a donor type." });
-  }
-
-  if (
-    !String(payload.donorName).trim() &&
-    !String(payload.organizationName).trim()
-  ) {
-    errors.push({
-      field: "donor_name",
-      message: "Enter a name or business/organization name.",
-    });
-  }
 
   if (payload.email && !isValidEmail(payload.email)) {
     errors.push({ field: "email", message: "Enter a valid email address." });
-  }
-
-  if (!Number.isFinite(amount) || amount <= 0) {
-    errors.push({
-      field: "amount",
-      message: "Enter a donation amount greater than 0.",
-    });
-  }
-
-  if (payload.inHonorMemory && !String(payload.honoreeName).trim()) {
-    errors.push({ field: "honoree_name", message: "Enter the honoree name." });
   }
 
   return errors;

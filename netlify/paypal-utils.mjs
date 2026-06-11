@@ -28,7 +28,14 @@ export const DEFAULT_NOTIFY_URL =
 
 export const buildPaypalDonationUrl = (record, env = process.env) => {
   const notifyUrl = env.PAYPAL_NOTIFY_URL || DEFAULT_NOTIFY_URL;
-  const amount = Number(record.amount).toFixed(2);
+
+  // The form no longer collects an amount; when none is present the
+  // amount parameter is omitted and the donor chooses it on PayPal's page.
+  const numericAmount = Number(record.amount);
+  const amount =
+    Number.isFinite(numericAmount) && numericAmount > 0
+      ? numericAmount.toFixed(2)
+      : "";
 
   if (env.PAYPAL_BUSINESS) {
     const host =
@@ -38,17 +45,23 @@ export const buildPaypalDonationUrl = (record, env = process.env) => {
       business: env.PAYPAL_BUSINESS,
       item_name: "Back Pack Kidz Donation",
       currency_code: env.PAYPAL_CURRENCY || "USD",
-      amount,
       custom: record.id,
       notify_url: notifyUrl,
     });
+
+    if (amount) {
+      params.set("amount", amount);
+    }
 
     return `https://${host}/cgi-bin/webscr?${params.toString()}`;
   }
 
   const url = new URL(env.PAYPAL_DONATION_URL || DEFAULT_HOSTED_DONATE_URL);
-  url.searchParams.set("amount", amount);
   url.searchParams.set("custom", record.id);
+
+  if (amount) {
+    url.searchParams.set("amount", amount);
+  }
 
   return url.toString();
 };

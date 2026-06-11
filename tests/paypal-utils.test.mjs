@@ -46,6 +46,23 @@ test("uses the sandbox host and notify_url override when configured", () => {
   assert.equal(url.searchParams.get("notify_url"), "https://example.com/ipn");
 });
 
+test("omits the amount parameter when no amount was provided", () => {
+  const hostedUrl = new URL(buildPaypalDonationUrl({ id: "abc-123", amount: "" }, {}));
+
+  assert.equal(hostedUrl.searchParams.has("amount"), false);
+  assert.equal(hostedUrl.searchParams.get("custom"), "abc-123");
+
+  const classicUrl = new URL(
+    buildPaypalDonationUrl(
+      { id: "abc-123", amount: "" },
+      { PAYPAL_BUSINESS: "pay@backpackkidz.com" }
+    )
+  );
+
+  assert.equal(classicUrl.searchParams.has("amount"), false);
+  assert.equal(classicUrl.searchParams.get("custom"), "abc-123");
+});
+
 test("default hosted URL preserves the existing hosted button ID", () => {
   assert.match(DEFAULT_HOSTED_DONATE_URL, /hosted_button_id=VSXH3DH6PUFH2/);
 });

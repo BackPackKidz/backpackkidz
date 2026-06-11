@@ -152,15 +152,15 @@
                 <h2>Donation information <small>(optional)</small></h2>
                 <p>
                   Share your details for a thank-you note or tribute message,
-                  then continue to PayPal. Required fields are marked with
-                  <span aria-hidden="true">*</span>.
+                  then continue to PayPal. Every field is optional &mdash;
+                  you'll choose your donation amount on PayPal's secure page.
                 </p>
               </div>
 
               <div class="form-grid">
                 <div class="form-field">
-                  <label for="donor_type">Donor type <span aria-hidden="true">*</span></label>
-                  <select class="donor_type" id="donor_type" name="donor_type" required>
+                  <label for="donor_type">Donor type</label>
+                  <select class="donor_type" id="donor_type" name="donor_type">
                     <option value="">Select one</option>
                     <option>Individual</option>
                     <option>Business</option>
@@ -172,26 +172,9 @@
                 </div>
 
                 <div class="form-field">
-                  <label for="amount">Donation amount <span aria-hidden="true">*</span></label>
-                  <div class="amount-input">
-                    <span aria-hidden="true">$</span>
-                    <input
-                      id="amount"
-                      name="amount"
-                      type="number"
-                      min="1"
-                      step="0.01"
-                      inputmode="decimal"
-                      required
-                    >
-                  </div>
-                  <p class="field-error" data-error-for="amount"></p>
-                </div>
-
-                <div class="form-field">
                   <label for="donor_name">Your name</label>
                   <input id="donor_name" name="donor_name" type="text" autocomplete="name">
-                  <p class="field-help">Enter either your name or an organization name.</p>
+                  <p class="field-help">Your name or an organization name.</p>
                   <p class="field-error" data-error-for="donor_name"></p>
                 </div>
 
@@ -263,7 +246,7 @@
                 </div>
                 <div class="form-grid">
                   <div class="form-field">
-                    <label for="honoree_name">Honoree name <span aria-hidden="true">*</span></label>
+                    <label for="honoree_name">Honoree name</label>
                     <input id="honoree_name" name="honoree_name" type="text">
                     <p class="field-error" data-error-for="honoree_name"></p>
                   </div>

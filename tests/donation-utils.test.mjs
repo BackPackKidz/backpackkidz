@@ -60,38 +60,36 @@ test("allows donor email to be omitted", () => {
   assert.equal(result.record.amount, 100);
 });
 
-test("rejects invalid amount", () => {
-  const result = createDonationRecord({
-    donorType: "Individual",
-    donorName: "Jane Donor",
-    amount: "0",
-  });
-
-  assert.equal(result.error, "Donation submission is missing required information.");
-  assert.deepEqual(result.fields, ["amount"]);
+test("stores a missing or invalid amount as blank instead of rejecting", () => {
+  assert.equal(createDonationRecord({ donorName: "Jane" }).record.amount, "");
+  assert.equal(
+    createDonationRecord({ donorName: "Jane", amount: "0" }).record.amount,
+    ""
+  );
+  assert.equal(
+    createDonationRecord({ donorName: "Jane", amount: "abc" }).record.amount,
+    ""
+  );
+  assert.equal(
+    createDonationRecord({ donorName: "Jane", amount: "$25.50" }).record.amount,
+    25.5
+  );
 });
 
-test("rejects missing donor and organization identity", () => {
-  const result = createDonationRecord({
-    donorType: "Individual",
-    amount: "25",
-  });
+test("accepts a completely empty submission (no required fields)", () => {
+  const result = createDonationRecord({});
 
-  assert.equal(result.error, "Donation submission is missing required information.");
-  assert.deepEqual(result.fields, ["donorName", "organizationName"]);
+  assert.equal(result.error, undefined);
+  assert.equal(result.record.status, "Pending");
+  assert.equal(result.record.donorName, "");
+  assert.equal(result.record.amount, "");
 });
 
-test("requires honoree name when honor or memory option is selected", () => {
-  const result = createDonationRecord({
-    donorType: "Business",
-    organizationName: "Local Helper LLC",
-    amount: "100",
-    inHonorMemory: true,
-    honorType: "in memory of",
-  });
+test("still flags a malformed email when one is entered", () => {
+  const result = createDonationRecord({ email: "not-an-email" });
 
-  assert.equal(result.error, "Donation submission is missing required information.");
-  assert.deepEqual(result.fields, ["honoreeName"]);
+  assert.equal(result.error, "Please double-check the highlighted fields.");
+  assert.deepEqual(result.fields, ["email"]);
 });
 
 test("new donation records start as Pending with empty bookkeeping fields", () => {

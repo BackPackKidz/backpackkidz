@@ -2081,58 +2081,6 @@ h3 {
     0 10px 20px rgba(15, 23, 42, 0.06);
 }
 
-.donate-page .amount-input {
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-  min-height: 54px;
-  background: var(--white);
-  border: 1px solid #d8dee7;
-  border-radius: 14px;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
-  transition:
-    border-color 0.18s ease,
-    box-shadow 0.18s ease,
-    background 0.18s ease;
-}
-
-.donate-page .amount-input:hover {
-  border-color: rgba(249, 115, 22, 0.42);
-  background: #fffdf9;
-}
-
-.donate-page .amount-input:focus-within {
-  border-color: var(--orange);
-  box-shadow:
-    0 0 0 4px rgba(249, 115, 22, 0.16),
-    0 10px 20px rgba(15, 23, 42, 0.06);
-}
-
-.donate-page .amount-input span {
-  display: grid;
-  place-items: center;
-  align-self: stretch;
-  width: 48px;
-  color: var(--orange-dark);
-  background: var(--orange-soft);
-  border-right: 1px solid rgba(249, 115, 22, 0.18);
-  font-weight: 900;
-}
-
-.donate-page .amount-input input {
-  min-height: 52px;
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
-  background: transparent;
-}
-
-.donate-page .amount-input input:hover,
-.donate-page .amount-input input:focus {
-  background: transparent;
-  box-shadow: none;
-}
-
 .donate-page .field-help {
   line-height: 1.45;
 }
