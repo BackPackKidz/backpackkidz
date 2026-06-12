@@ -1,8 +1,13 @@
 :root {
-  --orange: linear-gradient(319deg, #FDEE00 0%, #ff8243 37%, #f94d00 100%);
-  --orange-dark: linear-gradient(319deg, #b8a900 0%, #c24f1f 37%, #9f2f00 100%);
+  /* Solid brand colors for `color`, `border-color`, `outline`, `accent-color`
+     and gradient stops — these slots only accept a <color>, never a gradient. */
+  --orange: #f97316;
+  --orange-dark: #ea580c;
   --orange-soft: #fff7ed;
-  --navy: linear-gradient(315deg, #e4b5cb 0%, #722ae6 74%);
+  --navy: #461088;
+  /* Brand gradients for background slots only. */
+  --grad-orange: linear-gradient(319deg, #fdee00 0%, #ff8243 37%, #f94d00 100%);
+  --grad-purple: linear-gradient(315deg, #e4b5cb 0%, #722ae6 74%);
   --text: #1f2937;
   --muted: #64748b;
   --white: #ffffff;
@@ -82,6 +87,12 @@ h3 {
   letter-spacing: 0;
 }
 
+/* Avoid one-word last lines in large headings (ignored by older browsers). */
+h1,
+h2 {
+  text-wrap: balance;
+}
+
 h1 {
   max-width: 14ch;
   font-size: 3.75rem;
@@ -118,7 +129,7 @@ h3 {
   left: 0.75rem;
   z-index: 200;
   padding: 0.65rem 1.1rem;
-  background: var(--navy);
+  background: var(--grad-purple);
   color: #fff;
   border-radius: 999px;
   font-weight: 700;
@@ -149,7 +160,7 @@ h3 {
 .navbar {
   position: relative;
   width: min(var(--max-width), 92%);
-  min-height: 82px;
+  min-height: var(--header-height);
   margin: 0 auto;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
@@ -214,7 +225,7 @@ h3 {
   bottom: 6px;
   left: 0;
   height: 3px;
-  background: var(--orange);
+  background: var(--grad-orange);
   border-radius: 999px;
   transform: scaleX(0);
   transform-origin: center;
@@ -242,7 +253,7 @@ h3 {
 .nav-cta,
 .button-primary {
   color: var(--white);
-  background: linear-gradient(319deg, #FDEE00 0%, #ff8243 37%, #f94d00 100%);
+  background: var(--grad-orange);
   box-shadow: 0 12px 24px rgba(249, 115, 22, 0.28);
 }
 
@@ -593,6 +604,18 @@ h3 {
   text-align: left;
 }
 
+/* A button placed inside a section heading (e.g. "View Our Partners")
+   needs breathing room below the paragraph. */
+.section-heading .button {
+  margin-top: 1.4rem;
+}
+
+/* Inside the weekend copy column the grid gap already provides spacing,
+   so the heading's bottom margin would double it up. */
+.weekend-copy .section-heading {
+  margin-bottom: 0;
+}
+
 .feature-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -625,7 +648,7 @@ h3 {
   align-content: center;
   min-height: 260px;
   padding: 2rem;
-  background: linear-gradient(315deg, #e4b5cb 0%, #722ae6 74%);
+  background: var(--grad-purple);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-strong);
 }
@@ -673,7 +696,7 @@ h3 {
   height: 62px;
   margin-bottom: 1rem;
   color: var(--white);
-  background: var(--orange);
+  background: var(--grad-orange);
   border: 8px solid var(--surface);
   border-radius: 50%;
   font-weight: 900;
@@ -687,7 +710,7 @@ h3 {
   position: relative;
   overflow: hidden;
   color: var(--white);
-  background-color: linear-gradient(315deg, #e4b5cb 0%, #722ae6 74%);
+  background: var(--grad-purple);
 }
 
 .story-band::before {
@@ -791,7 +814,7 @@ h3 {
   position: sticky;
   top: 110px;
   padding: 2rem;
-  background: var(--navy);
+  background: var(--grad-purple);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-strong);
 }
@@ -858,6 +881,11 @@ h3 {
   gap: 1.6rem;
 }
 
+/* Keep the column's CTA compact instead of stretching to the grid width. */
+.weekend-copy > .button {
+  justify-self: start;
+}
+
 .stacked-features {
   display: grid;
   gap: 0.85rem;
@@ -875,7 +903,7 @@ h3 {
   bottom: 1.2rem;
   left: 0;
   width: 4px;
-  background: var(--orange);
+  background: var(--grad-orange);
   border-radius: 999px;
 }
 
@@ -1113,7 +1141,7 @@ h3 {
 
 .recognition-card:hover,
 .partner-impact-card:hover {
-  border-color:  linear-gradient(319deg, #b8a900 0%, #c24f1f 37%, #9f2f00 100%);
+  border-color: rgba(249, 115, 22, 0.28);
   box-shadow: 0 18px 36px rgba(15, 23, 42, 0.11);
   transform: translateY(-4px);
 }
@@ -1171,7 +1199,7 @@ h3 {
 }
 
 .sponsor-logo-link:focus-visible {
-  outline: linear-gradient(319deg, #b8a900 0%, #c24f1f 37%, #9f2f00 100%);
+  outline: 3px solid rgba(249, 115, 22, 0.55);
 }
 
 .recognition-grid {
@@ -1228,7 +1256,7 @@ h3 {
   gap: 2rem;
   align-items: center;
   padding: 2.25rem;
-  background: linear-gradient(315deg, #e4b5cb 0%, #722ae6 74%);
+  background: var(--grad-purple);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-strong);
 }
@@ -1255,9 +1283,9 @@ h3 {
   min-height: 46px;
   padding: 0 1.25rem;
   color: var(--white);
-  background: linear-gradient(319deg, #FDEE00 0%, #ff8243 37%, #f94d00 100%);
+  background: var(--grad-orange);
   border-radius: 999px;
-  box-shadow: linear-gradient(319deg, #b8a900 0%, #c24f1f 37%, #9f2f00 100%);
+  box-shadow: 0 18px 34px rgba(249, 115, 22, 0.3);
   font-size: 0.95rem;
   font-weight: 900;
   text-decoration: none;
@@ -1274,7 +1302,7 @@ h3 {
 }
 
 .floating-donate:hover {
-  box-shadow: linear-gradient(319deg, #b8a900 0%, #c24f1f 37%, #9f2f00 100%);
+  box-shadow: 0 22px 40px rgba(249, 115, 22, 0.4);
   transform: translateY(-2px);
 }
 
@@ -1299,7 +1327,7 @@ h3 {
 
 .site-footer {
   color: rgba(255, 255, 255, 0.82);
-  background: linear-gradient(315deg, #e4b5cb 0%, #722ae6 74%);
+  background: var(--grad-purple);
 }
 
 .footer-inner {
@@ -1399,9 +1427,8 @@ h3 {
   outline-offset: 4px;
 }
 
-@media (max-width: 1080px) {
+@media (max-width: 1100px) {
   h1 {
-    max-width: 14ch;
     font-size: 3.1rem;
   }
 
@@ -1409,19 +1436,17 @@ h3 {
     font-size: 2.1rem;
   }
 
-  .hero-grid,
-  .weekend-grid {
-    gap: 2.25rem;
-  }
-
   .footer-inner {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-}
 
-@media (max-width: 1100px) {
+  /* Keep the shared token in sync with the shorter mobile header so the
+     fixed nav panel and scroll offset line up with the real header edge. */
+  :root {
+    --header-height: 74px;
+  }
+
   .navbar {
-    min-height: 74px;
     grid-template-columns: auto 1fr auto;
     gap: 1rem;
   }
@@ -1524,7 +1549,8 @@ h3 {
     grid-template-columns: 1fr;
   }
 
-  .hero-grid {
+  .hero-grid,
+  .weekend-grid {
     gap: 2.5rem;
   }
 
@@ -1648,14 +1674,14 @@ h3 {
     padding: 1rem;
   }
 
-  /* Hide floating donate on small screens so it doesn't block form fields */
-  .floating-donate {
-    display: none !important;
+  .nav-logo {
+    gap: 0.55rem;
+    font-size: 1.08rem;
   }
 
-  /* Make sure nav panel accounts for sticky header when opened */
-  .nav-panel {
-    top: calc(var(--header-height));
+  .logo-image {
+    width: 38px;
+    height: 38px;
   }
 
   /* Prevent accidental horizontal scroll from large radius or shadows */
@@ -1809,18 +1835,6 @@ h3 {
 
   .floating-donate {
     display: none;
-  }
-}
-
-@media (max-width: 480px) {
-  .nav-logo {
-    gap: 0.55rem;
-    font-size: 1.08rem;
-  }
-
-  .logo-image {
-    width: 38px;
-    height: 38px;
   }
 }
 
@@ -2369,7 +2383,7 @@ h3 {
 
 .support-panel.support-panel-dark {
   color: var(--white);
-  background: linear-gradient(315deg, #e4b5cb 0%, #722ae6 74%);
+  background: var(--grad-purple);
   border-color: transparent;
 }
 
@@ -2417,7 +2431,7 @@ h3 {
   left: 0;
   width: 0.85rem;
   height: 0.85rem;
-  background: var(--orange);
+  background: var(--grad-orange);
   border-radius: 50%;
 }
 
