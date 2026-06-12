@@ -1,8 +1,8 @@
 :root {
-  --orange: #f97316;
-  --orange-dark: #ea580c;
+  --orange: linear-gradient(319deg, #FDEE00 0%, #ff8243 37%, #f94d00 100%);
+  --orange-dark: linear-gradient(319deg, #b8a900 0%, #c24f1f 37%, #9f2f00 100%);
   --orange-soft: #fff7ed;
-  --navy: #461088;
+  --navy: linear-gradient(315deg, #e4b5cb 0%, #722ae6 74%);
   --text: #1f2937;
   --muted: #64748b;
   --white: #ffffff;
@@ -242,7 +242,7 @@ h3 {
 .nav-cta,
 .button-primary {
   color: var(--white);
-  background: linear-gradient(135deg, var(--orange), var(--orange-dark));
+  background: linear-gradient(319deg, #FDEE00 0%, #ff8243 37%, #f94d00 100%);
   box-shadow: 0 12px 24px rgba(249, 115, 22, 0.28);
 }
 
@@ -625,9 +625,7 @@ h3 {
   align-content: center;
   min-height: 260px;
   padding: 2rem;
-  background:
-    linear-gradient(135deg, rgba(23, 37, 84, 0.96), #25044e),
-    var(--navy);
+  background: linear-gradient(315deg, #e4b5cb 0%, #722ae6 74%);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-strong);
 }
@@ -689,7 +687,7 @@ h3 {
   position: relative;
   overflow: hidden;
   color: var(--white);
-  background-color: #461088;
+  background-color: linear-gradient(315deg, #e4b5cb 0%, #722ae6 74%);
 }
 
 .story-band::before {
@@ -1087,7 +1085,7 @@ h3 {
   align-content: center;
   padding: 1.5rem;
   background: var(--orange-soft);
-  border: 1px solid rgba(249, 115, 22, 0.24);
+  border: 1px solid var(--orange-dark);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow);
 }
@@ -1115,7 +1113,7 @@ h3 {
 
 .recognition-card:hover,
 .partner-impact-card:hover {
-  border-color: rgba(249, 115, 22, 0.28);
+  border-color:  linear-gradient(319deg, #b8a900 0%, #c24f1f 37%, #9f2f00 100%);
   box-shadow: 0 18px 36px rgba(15, 23, 42, 0.11);
   transform: translateY(-4px);
 }
@@ -1173,7 +1171,7 @@ h3 {
 }
 
 .sponsor-logo-link:focus-visible {
-  outline: 3px solid rgba(249, 115, 22, 0.55);
+  outline: linear-gradient(319deg, #b8a900 0%, #c24f1f 37%, #9f2f00 100%);
 }
 
 .recognition-grid {
@@ -1230,7 +1228,7 @@ h3 {
   gap: 2rem;
   align-items: center;
   padding: 2.25rem;
-  background: linear-gradient(135deg, var(--orange), var(--orange-dark));
+  background: linear-gradient(315deg, #e4b5cb 0%, #722ae6 74%);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-strong);
 }
@@ -1257,9 +1255,9 @@ h3 {
   min-height: 46px;
   padding: 0 1.25rem;
   color: var(--white);
-  background: linear-gradient(135deg, var(--orange), var(--orange-dark));
+  background: linear-gradient(319deg, #FDEE00 0%, #ff8243 37%, #f94d00 100%);
   border-radius: 999px;
-  box-shadow: 0 18px 34px rgba(249, 115, 22, 0.3);
+  box-shadow: linear-gradient(319deg, #b8a900 0%, #c24f1f 37%, #9f2f00 100%);
   font-size: 0.95rem;
   font-weight: 900;
   text-decoration: none;
@@ -1276,7 +1274,7 @@ h3 {
 }
 
 .floating-donate:hover {
-  box-shadow: 0 22px 40px rgba(249, 115, 22, 0.4);
+  box-shadow: linear-gradient(319deg, #b8a900 0%, #c24f1f 37%, #9f2f00 100%);
   transform: translateY(-2px);
 }
 
@@ -1301,7 +1299,7 @@ h3 {
 
 .site-footer {
   color: rgba(255, 255, 255, 0.82);
-  background: #461088;
+  background: linear-gradient(315deg, #e4b5cb 0%, #722ae6 74%);
 }
 
 .footer-inner {
@@ -2371,9 +2369,7 @@ h3 {
 
 .support-panel.support-panel-dark {
   color: var(--white);
-  background:
-    linear-gradient(135deg, rgba(23, 37, 84, 0.96), #25044e),
-    var(--navy);
+  background: linear-gradient(315deg, #e4b5cb 0%, #722ae6 74%);
   border-color: transparent;
 }
 
