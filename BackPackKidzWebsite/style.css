@@ -383,7 +383,6 @@ h3 {
   justify-content: center;
   min-height: 50px;
   padding: 0 1.35rem;
-  border: 1px solid transparent;
   border-radius: 999px;
   font-size: 0.98rem;
   font-weight: 800;
@@ -461,7 +460,7 @@ h3 {
   bottom: 1.2rem;
   max-width: 260px;
   padding: 1rem;
-  color: var(--navy);
+  color: var(--grad-purple);
   background: rgba(255, 255, 255, 0.94);
   border: 1px solid rgba(255, 255, 255, 0.78);
   border-radius: var(--radius-md);
@@ -492,7 +491,7 @@ h3 {
   gap: 0.15rem;
   min-width: 126px;
   padding: 1rem;
-  color: var(--navy);
+  color: var(--grad-purple);
   background: var(--white);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
@@ -767,9 +766,8 @@ h3 {
   position: absolute;
   width: min(260px, 62%);
   padding: 1rem;
-  color: var(--navy);
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.74);
+  color: var(--grad-purple);
+  background: var(--grad-orange);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-strong);
 }
@@ -784,7 +782,7 @@ h3 {
 }
 
 .story-card span {
-  color: var(--muted);
+  color: var(--white);
   font-size: 0.92rem;
   line-height: 1.45;
 }
@@ -908,7 +906,7 @@ h3 {
 }
 
 .mission-section {
-  background: linear-gradient(135deg, var(--orange), var(--orange-dark));
+  background: var(--grad-orange);
 }
 
 .mission-panel {
@@ -2322,9 +2320,7 @@ h3 {
   gap: 1rem;
   align-content: center;
   padding: 2rem;
-  background:
-    linear-gradient(135deg, var(--navy), #25044e),
-    var(--navy);
+  background: var(--grad-purple);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-strong);
 }
