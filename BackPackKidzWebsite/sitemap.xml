@@ -2,35 +2,57 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.backpackkidz.com/</loc>
-  </url>
-  <url>
-    <loc>https://www.backpackkidz.com/pages/about</loc>
-  </url>
-  <url>
-    <loc>https://www.backpackkidz.com/pages/programs</loc>
-  </url>
-  <url>
-    <loc>https://www.backpackkidz.com/pages/sponsor</loc>
-  </url>
-  <url>
-    <loc>https://www.backpackkidz.com/pages/gallery</loc>
-  </url>
-  <url>
-    <loc>https://www.backpackkidz.com/pages/our-partners</loc>
-  </url>
-  <url>
-    <loc>https://www.backpackkidz.com/pages/contact</loc>
-  </url>
-  <url>
-    <loc>https://www.backpackkidz.com/pages/get-involved</loc>
+    <lastmod>2026-06-12</lastmod>
+    <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.backpackkidz.com/pages/donate</loc>
+    <lastmod>2026-06-12</lastmod>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.backpackkidz.com/pages/sponsor</loc>
+    <lastmod>2026-06-12</lastmod>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.backpackkidz.com/pages/get-involved</loc>
+    <lastmod>2026-06-12</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.backpackkidz.com/pages/about</loc>
+    <lastmod>2026-06-12</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.backpackkidz.com/pages/programs</loc>
+    <lastmod>2026-06-12</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.backpackkidz.com/pages/contact</loc>
+    <lastmod>2026-06-12</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.backpackkidz.com/pages/our-partners</loc>
+    <lastmod>2026-06-12</lastmod>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.backpackkidz.com/pages/faq</loc>
+    <lastmod>2026-06-12</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.backpackkidz.com/pages/gallery</loc>
+    <lastmod>2026-06-12</lastmod>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.backpackkidz.com/pages/future-events</loc>
+    <lastmod>2026-06-12</lastmod>
+    <priority>0.6</priority>
   </url>
 </urlset>
