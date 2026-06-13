@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Admin Export | Back Pack Kidz</title>
+    <link rel="icon" href="../assets/backpack-kidz-logo.png">
+    <link rel="stylesheet" href="../style.css">
+    <link href="https://db.onlinewebfonts.com/c/699dc1e4167e2bdae611e413fd4a8fe0?family=Crayon+Works+DEMO+Regular" rel="stylesheet">
+    <script src="../script.js" defer></script>
+  </head>
+  <body class="admin-page">
+    <a class="skip-link" href="#content">Skip to main content</a>
+    <header class="site-header">
+      <nav class="navbar" aria-label="Primary navigation">
+        <a href="/" class="nav-logo" aria-label="Back Pack Kidz Home">
+          <img
+            class="logo-image"
+            src="../assets/backpack-kidz-logo.png"
+            alt=""
+            width="42"
+            height="42"
+          >
+          <span class="logo-text">Back Pack Kidz</span>
+        </a>
+
+        <button
+          class="nav-toggle"
+          type="button"
+          aria-controls="primary-navigation"
+          aria-expanded="false"
+        >
+          <span class="sr-only">Open navigation menu</span>
+          <span class="nav-toggle-bars" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </button>
+
+        <div class="nav-panel" id="primary-navigation">
+          <ul class="nav-menu">
+            <li><a href="/">Home</a></li>
+            <li><a href="/pages/about.html">About</a></li>
+            <li><a href="/pages/programs.html">Programs</a></li>
+            <li><a href="/pages/sponsor.html">Sponsor</a></li>
+            <li><a href="/pages/gallery.html">Gallery</a></li>
+            <li><a href="/pages/our-partners.html">Our Partners</a></li>
+            <li><a href="/pages/contact.html">Contact</a></li>
+          </ul>
+
+          <div class="nav-actions">
+            <a href="/pages/get-involved.html" class="nav-link-secondary">Get Involved</a>
+            <a href="/pages/donate.html" class="nav-cta" data-donate-link>Donate Now</a>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main id="content">
+      <section class="section">
+        <div class="section-inner">
+          <div class="section-heading section-heading-left">
+            <h1>Admin Export</h1>
+            <p>
+              Download a CSV of all records for a given type. Each export
+              requires the matching token set in your Netlify environment
+              variables. Tokens are never shared and must be kept private.
+            </p>
+          </div>
+
+          <div class="admin-export-grid">
+
+            <div class="form-shell">
+              <h2>Donations</h2>
+              <p class="field-help">Requires <code>DONATIONS_EXPORT_TOKEN</code></p>
+              <form data-export-form data-export-url="/api/donations/export">
+                <div class="form-field">
+                  <label for="token-donations">Export token</label>
+                  <input id="token-donations" name="export_token" type="password" autocomplete="off" required>
+                </div>
+                <div class="form-submit-row">
+                  <button class="button button-primary" type="submit">Download CSV</button>
+                </div>
+                <p class="form-status" data-export-status role="status" aria-live="polite"></p>
+              </form>
+            </div>
+
+            <div class="form-shell">
+              <h2>Contacts</h2>
+              <p class="field-help">Requires <code>CONTACTS_EXPORT_TOKEN</code></p>
+              <form data-export-form data-export-url="/api/contacts/export">
+                <div class="form-field">
+                  <label for="token-contacts">Export token</label>
+                  <input id="token-contacts" name="export_token" type="password" autocomplete="off" required>
+                </div>
+                <div class="form-submit-row">
+                  <button class="button button-primary" type="submit">Download CSV</button>
+                </div>
+                <p class="form-status" data-export-status role="status" aria-live="polite"></p>
+              </form>
+            </div>
+
+            <div class="form-shell">
+              <h2>Volunteers</h2>
+              <p class="field-help">Requires <code>VOLUNTEERS_EXPORT_TOKEN</code></p>
+              <form data-export-form data-export-url="/api/volunteers/export">
+                <div class="form-field">
+                  <label for="token-volunteers">Export token</label>
+                  <input id="token-volunteers" name="export_token" type="password" autocomplete="off" required>
+                </div>
+                <div class="form-submit-row">
+                  <button class="button button-primary" type="submit">Download CSV</button>
+                </div>
+                <p class="form-status" data-export-status role="status" aria-live="polite"></p>
+              </form>
+            </div>
+
+            <div class="form-shell">
+              <h2>Sponsorships</h2>
+              <p class="field-help">Requires <code>SPONSORSHIPS_EXPORT_TOKEN</code></p>
+              <form data-export-form data-export-url="/api/sponsorships/export">
+                <div class="form-field">
+                  <label for="token-sponsorships">Export token</label>
+                  <input id="token-sponsorships" name="export_token" type="password" autocomplete="off" required>
+                </div>
+                <div class="form-submit-row">
+                  <button class="button button-primary" type="submit">Download CSV</button>
+                </div>
+                <p class="form-status" data-export-status role="status" aria-live="polite"></p>
+              </form>
+            </div>
+
+            <div class="form-shell">
+              <h2>Partners</h2>
+              <p class="field-help">Requires <code>PARTNERS_EXPORT_TOKEN</code></p>
+              <form data-export-form data-export-url="/api/partners/export">
+                <div class="form-field">
+                  <label for="token-partners">Export token</label>
+                  <input id="token-partners" name="export_token" type="password" autocomplete="off" required>
+                </div>
+                <div class="form-submit-row">
+                  <button class="button button-primary" type="submit">Download CSV</button>
+                </div>
+                <p class="form-status" data-export-status role="status" aria-live="polite"></p>
+              </form>
+            </div>
+
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <a href="/" class="footer-logo" aria-label="Back Pack Kidz Home">
+            <img src="../assets/backpack-kidz-logo.png" alt="" width="44" height="44" loading="lazy">
+            <span>Back Pack Kidz</span>
+          </a>
+          <p>
+            Fueling futures and fighting weekend hunger — one child, one
+            weekend at a time — through the power of community in Charlotte
+            County.
+          </p>
+        </div>
+
+        <div class="footer-column">
+          <h2>Quick Links</h2>
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/pages/about.html">About</a></li>
+            <li><a href="/pages/programs.html">Programs</a></li>
+            <li><a href="/pages/gallery.html">Gallery</a></li>
+            <li><a href="/pages/faq.html">FAQ</a></li>
+            <li><a href="/pages/future-events.html">Events</a></li>
+            <li><a href="/pages/contact.html">Contact</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-column">
+          <h2>Get Involved</h2>
+          <ul>
+            <li><a href="/pages/get-involved.html">Volunteer</a></li>
+            <li>
+              <a href="/pages/donate.html" data-donate-link>Make a Donation</a>
+            </li>
+            <li><a href="/pages/sponsor.html">Sponsor a Child</a></li>
+            <li><a href="/pages/our-partners.html">Partner with Us</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-column">
+          <h2>Contact Us</h2>
+          <ul>
+            <li><a href="mailto:contact@backpackkidz.com">contact@backpackkidz.com</a></li>
+            <li>1133 Bal Harbor Blvd. Suite 1139, PMB #148</li>
+            <li>Punta Gorda, FL 33950</li>
+          </ul>
+          <a href="/pages/contact.html" class="footer-cta">Make A Difference Today</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>Copyright &copy; 2026 The Back Pack Kidz | Powered by The Back Pack Kidz</p>
+      </div>
+    </footer>
+  </body>
+</html>

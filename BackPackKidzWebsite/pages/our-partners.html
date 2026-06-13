@@ -18,6 +18,7 @@
     <meta property="og:image" content="https://www.backpackkidz.com/assets/backpack-kidz-logo.png">
     <meta name="twitter:card" content="summary">
     <link rel="stylesheet" href="../style.css">
+    <link href="https://db.onlinewebfonts.com/c/699dc1e4167e2bdae611e413fd4a8fe0?family=Crayon+Works+DEMO+Regular" rel="stylesheet">
     <script src="../script.js" defer></script>
   </head>
   <body class="partners-page">
@@ -90,7 +91,7 @@
               to school nourished, supported, and ready to thrive.
             </p>
             <div class="button-row">
-              <a href="/pages/contact.html#contact-form" class="button button-primary">Become a Partner</a>
+              <a href="#partner-form" class="button button-primary">Become a Partner</a>
               <a
                 href="/pages/donate.html"
                 class="button button-secondary"
@@ -340,6 +341,112 @@
         </div>
       </section>
 
+      <section class="section" id="partner-form" aria-labelledby="partner-form-title">
+        <div class="section-inner form-layout">
+          <div class="form-aside" data-reveal>
+            <p class="eyebrow">Partner With Us</p>
+            <h2 id="partner-form-title">Let's work together.</h2>
+            <p class="lede">
+              Fill out the form and a Back Pack Kidz volunteer will follow up to
+              talk through how your organization can support weekend food
+              assistance in Charlotte County.
+            </p>
+            <div class="support-panel" data-reveal>
+              <h3>Not sure where to start?</h3>
+              <p>
+                You can also <a href="/pages/donate.html" data-donate-link>make a donation</a>
+                or <a href="/pages/sponsor.html">sponsor a child</a> directly.
+              </p>
+            </div>
+          </div>
+
+          <div data-reveal>
+            <form
+              class="form-shell"
+              data-api-form
+              action="/api/partners"
+              aria-describedby="partner-form-note"
+            >
+              <p id="partner-form-note" class="field-help">
+                Required fields are marked with <span aria-hidden="true">*</span>.
+              </p>
+
+              <div class="form-grid">
+                <div class="form-field">
+                  <label for="organizationName">Organization name <span aria-hidden="true">*</span></label>
+                  <input id="organizationName" name="organizationName" type="text" autocomplete="organization" required>
+                  <p class="field-error" data-error-for="organizationName"></p>
+                </div>
+                <div class="form-field">
+                  <label for="contactName">Your name <span aria-hidden="true">*</span></label>
+                  <input id="contactName" name="contactName" type="text" autocomplete="name" required>
+                  <p class="field-error" data-error-for="contactName"></p>
+                </div>
+                <div class="form-field">
+                  <label for="partner-title">Your title</label>
+                  <input id="partner-title" name="title" type="text" autocomplete="organization-title">
+                </div>
+                <div class="form-field">
+                  <label for="partner-email">Email <span aria-hidden="true">*</span></label>
+                  <input id="partner-email" name="email" type="email" autocomplete="email" required>
+                  <p class="field-error" data-error-for="email"></p>
+                </div>
+                <div class="form-field">
+                  <label for="partner-phone">Phone</label>
+                  <input id="partner-phone" name="phone" type="tel" autocomplete="tel">
+                </div>
+                <div class="form-field">
+                  <label for="partner-website">Website</label>
+                  <input id="partner-website" name="website" type="text" autocomplete="url" placeholder="https://your-org.org">
+                </div>
+                <div class="form-field">
+                  <label for="partnershipType">Partnership type</label>
+                  <select id="partnershipType" name="partnershipType">
+                    <option value="">Select one</option>
+                    <option>Donation / grant</option>
+                    <option>In-kind (food, supplies)</option>
+                    <option>Volunteer group</option>
+                    <option>Corporate sponsorship</option>
+                    <option>Event or fundraiser</option>
+                    <option>Promotional / outreach</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+                <div class="form-field form-field-full">
+                  <label for="proposedContribution">What would you like to contribute?</label>
+                  <textarea id="proposedContribution" name="proposedContribution" rows="3"></textarea>
+                </div>
+                <div class="form-field form-field-full">
+                  <label for="partner-message">Anything else we should know?</label>
+                  <textarea id="partner-message" name="message" rows="3"></textarea>
+                </div>
+              </div>
+
+              <div class="form-submit-row">
+                <button class="button button-primary" type="submit">Send inquiry</button>
+                <p class="form-status" data-form-status role="status" aria-live="polite"></p>
+              </div>
+              <p class="field-help">
+                The details you share are used only by Back Pack Kidz
+                volunteers to follow up on your inquiry. They are never posted
+                publicly.
+              </p>
+            </form>
+
+            <div class="form-success" data-form-success hidden role="status" aria-live="polite" aria-hidden="true">
+              <h2>Inquiry sent — thank you!</h2>
+              <p>
+                We've received your partner inquiry and will be in touch soon.
+                In the meantime, explore other ways to support Back Pack Kidz.
+              </p>
+              <p>
+                <a href="/pages/donate.html" class="button button-secondary" data-donate-link>Donate Now</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section class="section partner-cta-section" aria-labelledby="partner-cta-title">
         <div class="section-inner partner-cta-panel" data-reveal>
           <div>
@@ -350,7 +457,7 @@
             </p>
           </div>
           <div class="button-row">
-            <a href="/pages/contact.html#contact-form" class="button button-primary">Become a Partner</a>
+            <a href="#partner-form" class="button button-primary">Become a Partner</a>
             <a href="/pages/sponsor.html" class="button button-primary">Sponsor a Child</a>
             <a href="/pages/donate.html" class="button button-outline-light" data-donate-link>Donate Now</a>
             <a href="mailto:contact@backpackkidz.com?subject=Backpack%20Kidz%20Contact" class="button button-outline-light">Contact Us</a>

@@ -11,7 +11,7 @@ const parallaxLayers = Array.from(document.querySelectorAll(".parallax-layer"));
 const revealItems = Array.from(document.querySelectorAll("[data-reveal]"));
 const floatingDonate = document.querySelector(".floating-donate");
 const donationForm = document.querySelector("[data-donation-form]");
-const exportForm = document.querySelector("[data-export-form]");
+const exportForms = Array.from(document.querySelectorAll("[data-export-form]"));
 
 /* =========================
    Navigation
@@ -295,8 +295,13 @@ if (donationForm instanceof HTMLFormElement) {
   });
 }
 
-if (exportForm instanceof HTMLFormElement) {
+exportForms.forEach((exportForm) => {
   const statusNode = exportForm.querySelector("[data-export-status]");
+  const exportUrl = exportForm.dataset.exportUrl || "/api/donations/export";
+  const fileSlug =
+    exportForm.dataset.exportName ||
+    exportUrl.replace(/\/export\/?$/, "").split("/").filter(Boolean).pop() ||
+    "records";
 
   exportForm.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -316,7 +321,7 @@ if (exportForm instanceof HTMLFormElement) {
     }
 
     try {
-      const response = await fetch("/api/donations/export", {
+      const response = await fetch(exportUrl, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -324,7 +329,7 @@ if (exportForm instanceof HTMLFormElement) {
 
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
-        throw new Error(data.error || "Donation records could not be exported.");
+        throw new Error(data.error || "Records could not be exported.");
       }
 
       const blob = await response.blob();
@@ -333,7 +338,7 @@ if (exportForm instanceof HTMLFormElement) {
       const today = new Date().toISOString().slice(0, 10);
 
       downloadLink.href = downloadUrl;
-      downloadLink.download = `backpack-kidz-donations-${today}.csv`;
+      downloadLink.download = `backpack-kidz-${fileSlug}-${today}.csv`;
       downloadLink.click();
       URL.revokeObjectURL(downloadUrl);
 
@@ -346,7 +351,7 @@ if (exportForm instanceof HTMLFormElement) {
       }
     }
   });
-}
+});
 
 /* =========================
    Reveal animations
