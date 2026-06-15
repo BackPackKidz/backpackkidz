@@ -2918,7 +2918,7 @@ h3 {
   overflow: hidden;
   user-select: none;
   padding: 2rem 0;
-  background: #f9f9f9;
+  background: #ffffff;
 }
 
 /* Track holds both groups side-by-side; animation lives here */
@@ -2978,7 +2978,8 @@ h3 {
   display: block;
   width: 100%;
   max-width: none;
-  margin: 0 auto 2rem;
+  margin-bottom: 2rem;
+  margin-top: 2rem;
   color: var(--navy);
   font-size: clamp(2.2rem, 5vw, 3rem);
   font-weight: 900;
