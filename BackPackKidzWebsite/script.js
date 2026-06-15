@@ -634,3 +634,17 @@ if (sponsorCalc) {
   countInput?.addEventListener("input", updateSponsorTotal);
   updateSponsorTotal();
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  const track = document.getElementById("marqueeTrack");
+  const firstGroup = track?.querySelector(".marquee-group");
+
+  if (!track || !firstGroup || track.children.length > 1) return;
+
+  const clone = firstGroup.cloneNode(true);
+  clone.setAttribute("aria-hidden", "true");
+  clone.querySelectorAll("a").forEach((link) => {
+    link.setAttribute("tabindex", "-1");
+  });
+  track.appendChild(clone);
+});

@@ -25,6 +25,8 @@
   --max-width: 1240px;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --header-height: 82px;
+  --marquee-speed: 100s;
+  --marquee-gap: 3rem;
 }
 
 * {
@@ -42,10 +44,6 @@ body {
   margin: 0;
   color: var(--text);
   background: var(--white);
-  /* A clean, dependency-free system sans stack. The previous value
-     ('Brush Script MT', cursive) rendered the entire site in a script
-     font, which conflicted with the heavy headings and the professional,
-     donor-facing tone. */
   font-family: 'comic sans ms', sans-serif;
 }
 
@@ -2911,5 +2909,88 @@ h3 {
   .form-shell .form-submit-row,
   .form-shell .form-submit-row .button {
     width: 100%;
+  }
+}
+
+/* Container hides the logos scrolling out of bounds */
+.marquee-container {
+  width: 100%;
+  overflow: hidden;
+  user-select: none;
+  padding: 2rem 0;
+  background: #f9f9f9;
+}
+
+/* Track holds both groups side-by-side; animation lives here */
+.marquee-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: scroll-marquee var(--marquee-speed) linear infinite;
+}
+
+/* Pause on hover */
+.marquee-container:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* Each group is exactly its content width; padding-right bridges the inter-group gap */
+.marquee-group {
+  display: flex;
+  align-items: center;
+  gap: var(--marquee-gap);
+  padding-right: var(--marquee-gap);
+  flex: 0 0 auto;
+}
+
+.marquee-container .sponsor-logo-link {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(150px, 16vw, 250px);
+  min-height: 110px;
+  padding: 0.5rem;
+  text-decoration: none;
+}
+
+.marquee-container .sponsor-logo-link img {
+  display: block;
+  width: 100%;
+  max-width: 230px;
+  max-height: 82px;
+  height: auto;
+  object-fit: contain;
+  opacity: 1;
+  visibility: visible;
+}
+
+.marquee-container .sponsor-logo-tall img {
+  max-height: 100px;
+  max-width: 170px;
+}
+
+.marquee-container .sponsor-logo-wide img {
+  max-width: 260px;
+}
+
+/* translateX(-50%) works because JS duplicates the group, making the track 2× wide */
+@keyframes scroll-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 640px) {
+  .marquee-container .sponsor-logo-link {
+    width: clamp(130px, 42vw, 210px);
+    min-height: 92px;
+  }
+
+  .marquee-container .sponsor-logo-link img {
+    max-height: 68px;
   }
 }

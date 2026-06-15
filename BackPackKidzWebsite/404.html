@@ -1,139 +1,87 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta
-      name="description"
-      content="That page could not be found. Find your way back to Back Pack Kidz — donate, volunteer, or contact us in Charlotte County, Florida."
-    >
-    <meta name="robots" content="noindex">
-    <title>Page Not Found | Back Pack Kidz</title>
-    <!-- Served at any URL depth, so every path on this page is absolute. -->
-    <link rel="icon" href="/assets/backpack-kidz-logo.png">
-    <link rel="stylesheet" href="/style.css">
-    <script src="/script.js" defer></script>
-  </head>
-  <body>
-    <a class="skip-link" href="#content">Skip to main content</a>
-    <header class="site-header">
-      <nav class="navbar" aria-label="Primary navigation">
-        <a href="/" class="nav-logo" aria-label="Back Pack Kidz Home">
-          <img
-            class="logo-image"
-            src="/assets/backpack-kidz-logo.png"
-            alt=""
-            width="42"
-            height="42"
-          >
-          <span class="logo-text">Back Pack Kidz</span>
-        </a>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-        <button
-          class="nav-toggle"
-          type="button"
-          aria-controls="primary-navigation"
-          aria-expanded="false"
-        >
-          <span class="sr-only">Open navigation menu</span>
-          <span class="nav-toggle-bars" aria-hidden="true">
-            <span></span>
-            <span></span>
-            <span></span>
-          </span>
-        </button>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #343a40;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            padding: 20px;
+        }
 
-        <div class="nav-panel" id="primary-navigation">
-          <ul class="nav-menu">
-            <li><a href="/">Home</a></li>
-            <li><a href="/pages/about.html">About</a></li>
-            <li><a href="/pages/programs.html">Programs</a></li>
-            <li><a href="/pages/sponsor.html">Sponsor</a></li>
-            <li><a href="/pages/gallery.html">Gallery</a></li>
-            <li><a href="/pages/our-partners.html">Our Partners</a></li>
-            <li><a href="/pages/contact.html">Contact</a></li>
-          </ul>
+        .container {
+            max-width: 500px;
+        }
 
-          <div class="nav-actions">
-            <a href="/pages/get-involved.html" class="nav-link-secondary">Get Involved</a>
-            <a href="/pages/donate.html" class="nav-cta" data-donate-link>Donate Now</a>
-          </div>
-        </div>
-      </nav>
-    </header>
+        .error-code {
+            font-size: 8rem;
+            font-weight: 800;
+            color: #dc3545;
+            line-height: 1;
+            margin-bottom: 10px;
+            animation: float 4s ease-in-out infinite;
+        }
 
-    <main id="content">
-      <section class="page-hero section">
-        <div class="hero-texture" aria-hidden="true"></div>
-        <div class="section-inner page-hero-grid">
-          <div class="page-hero-copy">
-            <p class="eyebrow">Page not found</p>
-            <h1>This page seems to have wandered off.</h1>
-            <p class="lede">
-              The page you're looking for doesn't exist or may have moved.
-              The good news: every way to help local kids is still right here.
-            </p>
-            <div class="button-row">
-              <a href="/" class="button button-primary">Back to Home</a>
-              <a href="/pages/donate.html" class="button button-secondary" data-donate-link>Donate</a>
-              <a href="/pages/get-involved.html" class="button button-secondary">Get Involved</a>
-              <a href="/pages/contact.html" class="button button-text">Contact Us</a>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
+        .error-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
 
-    <footer class="site-footer">
-      <div class="footer-inner">
-        <div class="footer-brand">
-          <a href="/" class="footer-logo" aria-label="Back Pack Kidz Home">
-            <img src="/assets/backpack-kidz-logo.png" alt="" width="44" height="44" loading="lazy">
-            <span>Back Pack Kidz</span>
-          </a>
-          <p>
-            Fueling futures and fighting weekend hunger — one child, one
-            weekend at a time — through the power of community in Charlotte
-            County.
-          </p>
-        </div>
+        .error-message {
+            font-size: 1.1rem;
+            color: #6c757d;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
 
-        <div class="footer-column">
-          <h2>Quick Links</h2>
-          <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/pages/about.html">About</a></li>
-            <li><a href="/pages/programs.html">Programs</a></li>
-            <li><a href="/pages/gallery.html">Gallery</a></li>
-            <li><a href="/pages/faq.html">FAQ</a></li>
-            <li><a href="/pages/future-events.html">Events</a></li>
-            <li><a href="/pages/contact.html">Contact</a></li>
-          </ul>
-        </div>
+        .home-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #ffffff;
+            background-color: #007bff;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 123, 255, 0.25);
+        }
 
-        <div class="footer-column">
-          <h2>Get Involved</h2>
-          <ul>
-            <li><a href="/pages/get-involved.html">Volunteer</a></li>
-            <li><a href="/pages/donate.html" data-donate-link>Make a Donation</a></li>
-            <li><a href="/pages/sponsor.html">Sponsor a Child</a></li>
-            <li><a href="/pages/our-partners.html">Partner with Us</a></li>
-          </ul>
-        </div>
+        .home-btn:hover {
+            background-color: #0056b3;
+        }
 
-        <div class="footer-column">
-          <h2>Contact Us</h2>
-          <ul>
-            <li><a href="mailto:contact@backpackkidz.com">contact@backpackkidz.com</a></li>
-            <li>1133 Bal Harbor Blvd. Suite 1139, PMB #148</li>
-            <li>Punta Gorda, FL 33950</li>
-          </ul>
-          <a href="/pages/contact.html" class="footer-cta">Make A Difference Today</a>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p>Copyright &copy; 2026 The Back Pack Kidz | Powered by The Back Pack Kidz</p>
-      </div>
-    </footer>
-  </body>
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="error-code">404</div>
+        <h1 class="error-title">Oops! Page Not Found</h1>
+        <p class="error-message">
+            The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.
+        </p>
+        <a href="/" class="home-btn">Go Back Home</a>
+    </div>
+
+</body>
 </html>
