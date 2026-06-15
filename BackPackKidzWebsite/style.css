@@ -2974,6 +2974,17 @@ h3 {
   max-width: 260px;
 }
 
+.marquee-container-header {
+  display: block;
+  width: 100%;
+  max-width: none;
+  margin: 0 auto 2rem;
+  color: var(--navy);
+  font-size: clamp(2.2rem, 5vw, 3rem);
+  font-weight: 900;
+  text-align: center;
+}
+
 /* translateX(-50%) works because JS duplicates the group, making the track 2× wide */
 @keyframes scroll-marquee {
   from {
