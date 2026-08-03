@@ -27,6 +27,14 @@ const communityPartners = [
     height: 239,
   },
   {
+    name: "Hoffer Family Foundation",
+    image: "/assets/sponsor-hoffer-family-foundation.png",
+    alt: "Hoffer Family Foundation logo",
+    className: "sponsor-logo-wide",
+    width: 1152,
+    height: 657,
+  },
+  {
     name: "Burnt Store Presbyterian Church",
     href: "https://www.bspconline.org/",
     image: "/assets/sponsor-burnt-store-presbyterian.png",
@@ -153,15 +161,18 @@ const setFormBusy = (form, submitButton, isBusy) => {
 };
 
 const buildPartnerLink = (partner, options = {}) => {
-  const link = document.createElement("a");
+  const link = document.createElement(partner.href ? "a" : "div");
 
   link.className = ["sponsor-logo-link", partner.className]
     .filter(Boolean)
     .join(" ");
-  link.href = partner.href;
-  link.target = "_blank";
-  link.rel = "noopener noreferrer";
-  link.setAttribute("aria-label", `Visit ${partner.name} website`);
+
+  if (link instanceof HTMLAnchorElement) {
+    link.href = partner.href;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.setAttribute("aria-label", `Visit ${partner.name} website`);
+  }
 
   if (options.reveal) {
     link.setAttribute("data-reveal", "");
@@ -171,7 +182,7 @@ const buildPartnerLink = (partner, options = {}) => {
     const image = document.createElement("img");
 
     image.src = partner.image;
-    image.alt = "";
+    image.alt = partner.alt || "";
     image.loading = "lazy";
     image.width = partner.width;
     image.height = partner.height;
