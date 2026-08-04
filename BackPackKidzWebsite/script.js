@@ -27,12 +27,23 @@ const communityPartners = [
     height: 239,
   },
   {
+    // TODO (owner): the Hoffer Family Foundation has no standalone website, so both
+    // it and its German Shepherd Rescue division link to swflgsdrescue.com. Send a
+    // different foundation URL if you'd rather they point somewhere else.
     name: "Hoffer Family Foundation",
+    href: "https://swflgsdrescue.com/",
     image: "/assets/sponsor-hoffer-family-foundation.png",
-    alt: "Hoffer Family Foundation logo",
     className: "sponsor-logo-wide",
     width: 1152,
     height: 657,
+  },
+  {
+    name: "Southwest Florida German Shepherd Rescue",
+    href: "https://swflgsdrescue.com/",
+    image: "/assets/sponsor-swfl-german-shepherd-rescue.png",
+    className: "sponsor-logo-tall",
+    width: 480,
+    height: 544,
   },
   {
     name: "Burnt Store Presbyterian Church",
