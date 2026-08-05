@@ -1,27 +1,69 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta
       name="description"
-      content="Upcoming Back Pack Kidz events in Charlotte County, Florida — food drives, packing days, fundraisers, community presentations, and volunteer opportunities."
+      content="The Life of Riley — a Back Pack Kidz fundraiser honoring Mike Riley on Friday, August 7, 2026 in Port Charlotte, Florida. Event details, tickets, and upcoming Charlotte County events."
     >
-    <title>Upcoming Events | Back Pack Kidz</title>
+    <title>The Life of Riley Fundraiser &amp; Upcoming Events | Back Pack Kidz</title>
     <link rel="icon" href="../assets/backpack-kidz-logo.png">
     <link rel="canonical" href="https://www.backpackkidz.com/pages/future-events">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Back Pack Kidz">
-    <meta property="og:title" content="Upcoming Events | Back Pack Kidz">
-    <meta property="og:description" content="Upcoming Back Pack Kidz events in Charlotte County, Florida — food drives, packing days, fundraisers, community presentations, and volunteer opportunities.">
+    <meta property="og:title" content="The Life of Riley Fundraiser &amp; Upcoming Events | Back Pack Kidz">
+    <meta property="og:description" content="The Life of Riley — a Back Pack Kidz fundraiser honoring Mike Riley on Friday, August 7, 2026 in Port Charlotte, Florida. Event details, tickets, and upcoming Charlotte County events.">
     <meta property="og:url" content="https://www.backpackkidz.com/pages/future-events">
-    <meta property="og:image" content="https://www.backpackkidz.com/assets/backpack-kidz-logo.png">
-    <meta name="twitter:card" content="summary">
+    <meta property="og:image" content="https://www.backpackkidz.com/assets/event-life-of-riley-flyer-full.jpg">
+    <meta name="twitter:card" content="summary_large_image">
     <link rel="stylesheet" href="../style.css">
     <link href="https://db.onlinewebfonts.com/c/699dc1e4167e2bdae611e413fd4a8fe0?family=Crayon+Works+DEMO+Regular" rel="stylesheet">
     <script src="../script.js" defer></script>
+    <!--
+      Event structured data. Every value below is taken from the approved
+      event flyer. The venue's business name is not printed on the flyer, so
+      the Place is described by street address only.
+      TODO (owner): send the venue name and the ticket price and we can add
+      `location.name` and `offers.price` here.
+    -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Event",
+      "name": "The Life of Riley",
+      "description": "A Back Pack Kidz fundraiser honoring Mike Riley. Join Riley's friends, family, former students, athletes, colleagues, and fans in supporting Back Pack Kidz and helping feed hungry children in Charlotte County.",
+      "startDate": "2026-08-07T18:00:00-04:00",
+      "endDate": "2026-08-07T22:00:00-04:00",
+      "eventStatus": "https://schema.org/EventScheduled",
+      "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+      "url": "https://www.backpackkidz.com/pages/future-events",
+      "image": "https://www.backpackkidz.com/assets/event-life-of-riley-flyer-full.jpg",
+      "location": {
+        "@type": "Place",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "2411 Rampart Boulevard",
+          "addressLocality": "Port Charlotte",
+          "addressRegion": "FL",
+          "postalCode": "33980",
+          "addressCountry": "US"
+        }
+      },
+      "organizer": {
+        "@type": "NonprofitOrganization",
+        "name": "Back Pack Kidz",
+        "url": "https://www.backpackkidz.com/"
+      },
+      "offers": {
+        "@type": "Offer",
+        "url": "https://ticketstripe.com/lifeofriley2026",
+        "availability": "https://schema.org/InStock"
+      }
+    }
+    </script>
   </head>
-  <body>
+  <body class="events-page">
     <a class="skip-link" href="#content">Skip to main content</a>
     <header class="site-header">
       <nav class="navbar" aria-label="Primary navigation">
@@ -29,7 +71,7 @@
           <img
             class="logo-image"
             src="../assets/backpack-kidz-logo.png"
-            
+            alt=""
             width="42"
             height="42"
           >
@@ -70,60 +112,345 @@
     </header>
 
     <main id="content">
-      <section class="page-hero section" data-parallax-section>
+      <!-- Featured event hero. All copy and details come from the approved
+           event flyer (assets/event-life-of-riley-flyer-full.jpg). -->
+      <section class="page-hero section" data-parallax-section aria-labelledby="featured-event-title">
         <div class="hero-texture" aria-hidden="true"></div>
-        <div class="section-inner page-hero-grid">
-          <div class="page-hero-copy" data-reveal>
-            <p class="eyebrow">Upcoming Events</p>
-            <h1>Show up. Pack bags. Make a weekend.</h1>
-            <p class="lede">
-              From packing days to food drives and community presentations,
-              there are lots of ways to get involved in person. Check back here
-              for upcoming events, or reach out to bring one to your group.
+        <div class="section-inner page-hero-grid event-hero-grid">
+          <div class="page-hero-copy event-hero-copy" data-reveal>
+            <p class="eyebrow">Featured Event &middot; August 7, 2026</p>
+            <h1 id="featured-event-title">The Life of Riley</h1>
+            <p class="event-hero-subtitle">
+              A Back Pack Kidz fundraiser honoring Mike Riley.
             </p>
+            <p class="lede">
+              Honoring Riley. Feeding children. Strengthening our community.
+              Join Riley's friends, family, former students, athletes,
+              colleagues, and fans in supporting Back Pack Kidz and helping
+              feed hungry children in Charlotte County.
+            </p>
+
+            <div class="event-hero-meta">
+              <p class="event-date-badge" aria-hidden="true">
+                <span class="event-date-month">Aug</span>
+                <span class="event-date-day">7</span>
+                <span class="event-date-year">2026</span>
+              </p>
+              <dl>
+                <dt>When</dt>
+                <dd>Friday, August 7, 2026 &middot; 6:00&ndash;10:00 p.m.</dd>
+                <dt>Where</dt>
+                <dd>2411 Rampart Boulevard, Port Charlotte, FL 33980</dd>
+              </dl>
+            </div>
+
             <div class="button-row">
-              <a href="/pages/get-involved.html" class="button button-primary">Get Involved</a>
-              <a href="/pages/contact.html" class="button button-secondary">Host an Event</a>
+              <a
+                href="https://ticketstripe.com/lifeofriley2026"
+                class="button button-primary"
+                target="_blank"
+                rel="noopener noreferrer"
+              >Get Tickets</a>
+              <a href="/pages/donate.html" class="button button-secondary" data-donate-link>Donate Instead</a>
             </div>
           </div>
 
-          <aside class="page-hero-aside" data-reveal>
-            <h2>Stay in the loop</h2>
+          <figure class="event-flyer-figure" data-reveal>
+            <a
+              class="event-flyer-frame"
+              href="/assets/event-life-of-riley-flyer-full.jpg"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Open the full-size The Life of Riley event flyer in a new tab"
+            >
+              <picture>
+                <source type="image/webp" srcset="/assets/event-life-of-riley-flyer.webp">
+                <img
+                  src="/assets/event-life-of-riley-flyer.jpg"
+                  alt="The Life of Riley event flyer: a Back Pack Kidz fundraiser honoring Mike Riley, Friday August 7th, 6:00pm to 10:00pm, at 2411 Rampart Boulevard, Port Charlotte, Florida 33980. Sponsored by the Rotary Club of Peace River."
+                  width="760"
+                  height="1074"
+                  fetchpriority="high"
+                >
+              </picture>
+            </a>
+            <figcaption class="event-flyer-caption">
+              The official event flyer &mdash; open it full size for printing or
+              sharing. Every detail on it is also written out below.
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="event-details-title">
+        <div class="section-inner">
+          <div class="section-heading" data-reveal>
+            <h2 id="event-details-title">Event details</h2>
             <p>
-              Want to know when the next packing day or food drive is happening?
-              Send us a note and we'll keep you posted.
+              Everything you need to know about the evening, at a glance.
+            </p>
+          </div>
+
+          <div class="event-detail-grid">
+            <article class="event-detail-card" data-reveal>
+              <span class="event-detail-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+                  <path d="M8 3v4M16 3v4M3 11h18"></path>
+                </svg>
+              </span>
+              <h3>Date &amp; time</h3>
+              <strong>Friday, August 7, 2026</strong>
+              <p>6:00 p.m. to 10:00 p.m.</p>
+            </article>
+
+            <article class="event-detail-card" data-reveal>
+              <span class="event-detail-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"></path>
+                  <circle cx="12" cy="10" r="2.5"></circle>
+                </svg>
+              </span>
+              <h3>Location</h3>
+              <strong>2411 Rampart Boulevard</strong>
+              <p>Port Charlotte, Florida 33980</p>
+              <a
+                class="button button-text"
+                href="https://www.google.com/maps/search/?api=1&amp;query=2411%20Rampart%20Boulevard%2C%20Port%20Charlotte%2C%20FL%2033980"
+                target="_blank"
+                rel="noopener noreferrer"
+              >Get directions &rarr;</a>
+            </article>
+
+            <article class="event-detail-card" data-reveal>
+              <span class="event-detail-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a3 3 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a3 3 0 0 0 0-6z"></path>
+                  <path d="M14 5v14"></path>
+                </svg>
+              </span>
+              <h3>Tickets</h3>
+              <strong>Available online</strong>
+              <!-- TODO (owner): the flyer lists the ticket page but not a
+                   price. Send the ticket price (or "free admission") and we
+                   will add it here and to the Event structured data. -->
+              <p>Reserve your seat through our ticket page.</p>
+              <a
+                class="button button-text"
+                href="https://ticketstripe.com/lifeofriley2026"
+                target="_blank"
+                rel="noopener noreferrer"
+              >Go to tickets &rarr;</a>
+            </article>
+
+            <article class="event-detail-card" data-reveal>
+              <span class="event-detail-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+                  <path d="m3.6 7 8.4 6 8.4-6"></path>
+                </svg>
+              </span>
+              <h3>Questions</h3>
+              <strong>We're happy to help</strong>
+              <!-- TODO (owner): the flyer prints an "info@" address that is
+                   not a live mailbox on this domain. Using the real
+                   contact@ address here. Either create the info@ mailbox or
+                   switch to contact@ on future printings. -->
+              <p>Reach the Back Pack Kidz team any time.</p>
+              <a class="button button-text" href="mailto:contact@backpackkidz.com">contact@backpackkidz.com</a>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section event-story-section" aria-labelledby="event-story-title">
+        <div class="section-inner split-grid">
+          <div class="prose" data-reveal>
+            <h2 id="event-story-title">Why this night matters</h2>
+            <p>
+              The Life of Riley is a celebration first &mdash; an evening for
+              the people whose lives Mike Riley has touched to be in the same
+              room. Friends, family, former students, athletes, colleagues, and
+              fans are all invited.
             </p>
             <p>
-              <a href="/pages/contact.html">Contact the team &rarr;</a>
+              It is also a fundraiser. Every dollar raised goes to Back Pack
+              Kidz, the volunteer-run program that packs weekend food bags for
+              Charlotte County children who count on school meals during the
+              week. When school closes on Friday, those bags are what carry a
+              child through to Monday.
+            </p>
+            <p>
+              Come for the music and the memories. Leave knowing local kids
+              will eat this weekend.
+            </p>
+          </div>
+
+          <aside class="support-panel support-panel-dark" data-reveal>
+            <h3>What your ticket does</h3>
+            <p>
+              <strong>$10</strong> feeds one child for a weekend.
+            </p>
+            <p>
+              <strong>$320</strong> feeds one child for the whole school year.
+            </p>
+            <p>
+              Can't make it on August 7th? A donation does the same work.
+            </p>
+            <p>
+              <a href="/pages/donate.html" data-donate-link>Donate to Back Pack Kidz &rarr;</a>
             </p>
           </aside>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="event-sponsors-title">
+        <div class="section-inner">
+          <div class="section-heading" data-reveal>
+            <h2 id="event-sponsors-title">Thank you to our event supporters</h2>
+            <p>
+              This evening happens because local people and organizations
+              stepped up for Charlotte County kids.
+            </p>
+          </div>
+
+          <!-- TODO (owner): we are crediting these supporters in text because
+               we do not have approved logo files for them. Send the official
+               Rotary Club of Peace River and Leroy's Fish Shack logos (and
+               their website URLs) and we can show them here and add them to
+               the community partners marquee. -->
+          <div class="event-sponsor-grid">
+            <article class="event-sponsor-card" data-reveal>
+              <span class="event-sponsor-role">Event Sponsor</span>
+              <strong>Rotary Club of Peace River</strong>
+              <p>
+                Standing behind the evening and behind local children.
+              </p>
+            </article>
+
+            <article class="event-sponsor-card" data-reveal>
+              <span class="event-sponsor-role">Food Provided By</span>
+              <strong>Leroy's Fish Shack</strong>
+              <p>
+                Mr. Leroy is providing the evening's food with his compliments.
+              </p>
+            </article>
+
+            <article class="event-sponsor-card" data-reveal>
+              <span class="event-sponsor-role">Benefiting</span>
+              <strong>Back Pack Kidz</strong>
+              <p>
+                Weekend food bags for Charlotte County kids since 2010.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Community appreciation for Mr. Leroy. Copy is drawn from the
+           Leroy's Fish Shack advertisement supplied by the owner. -->
+      <section class="section appreciation-section" aria-labelledby="appreciation-title">
+        <div class="section-inner appreciation-grid">
+          <div class="appreciation-card" data-reveal>
+            <p class="eyebrow">Community Partner</p>
+            <h2 id="appreciation-title">A special thank you to Mr. Leroy</h2>
+            <p class="appreciation-lede">
+              The Back Pack Kidz family would like to extend our sincere
+              appreciation to Mr. Leroy and everyone at Leroy's Fish Shack for
+              their generosity and continued support of our mission. Community
+              partners like Leroy's help make events like this possible, and
+              we're grateful for everything they do for local children and
+              families.
+            </p>
+
+            <ul class="appreciation-facts">
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 20.3 4.6 13a4.7 4.7 0 0 1 6.6-6.7l.8.8.8-.8A4.7 4.7 0 0 1 19.4 13z"></path>
+                </svg>
+                <span>
+                  Leroy's is providing the food for The Life of Riley with
+                  their compliments &mdash; a full table, and a full heart.
+                </span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="9" cy="8" r="3.2"></circle>
+                  <path d="M2.6 20a6.4 6.4 0 0 1 12.8 0"></path>
+                  <path d="M16.2 5.6a3.2 3.2 0 0 1 0 6.2M17.6 20a6.4 6.4 0 0 0-2.1-4.8"></path>
+                </svg>
+                <span>
+                  Their support is offered in celebration of Mike Riley and in
+                  support of Back Pack Kidz.
+                </span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"></path>
+                  <circle cx="12" cy="10" r="2.5"></circle>
+                </svg>
+                <span>
+                  From our boats to your table &mdash; Leroy's Fish Shack of
+                  Punta Gorda, coming soon to
+                  <a href="https://www.fishermensvillage.com/" target="_blank" rel="noopener noreferrer">Fishermen's Village</a>.
+                </span>
+              </li>
+            </ul>
+
+            <p class="appreciation-signoff">
+              Thank you, Mr. Leroy. Charlotte County is better fed because of
+              neighbors like you.
+            </p>
+
+            <!-- TODO (owner): if Leroy's Fish Shack has a website or Facebook
+                 page you would like us to link, send it and we will add a
+                 "Visit Leroy's Fish Shack" button here. -->
+            <a href="/pages/our-partners.html" class="button button-secondary">See all community partners</a>
+          </div>
+
+          <figure class="appreciation-art" data-reveal>
+            <div class="appreciation-art-frame">
+              <picture>
+                <source type="image/webp" srcset="/assets/partner-leroys-fish-shack.webp">
+                <img
+                  src="/assets/partner-leroys-fish-shack.jpg"
+                  alt="Leroy's Fish Shack advertisement reading: Proud community partner. A full table. A full heart. Leroy's is honored to provide tonight's food with our compliments, in celebration of Mike Riley and in support of Back Pack Kidz. The Life of Riley fundraiser, August 7, 2026. From our boats to your table. Leroy's Fish Shack, Punta Gorda. Coming soon to Fishermen's Village."
+                  width="720"
+                  height="1113"
+                  loading="lazy"
+                >
+              </picture>
+            </div>
+            <figcaption>
+              Leroy's Fish Shack &mdash; proud community partner of Back Pack
+              Kidz.
+            </figcaption>
+          </figure>
         </div>
       </section>
 
       <section class="section events-section" aria-labelledby="events-title">
         <div class="section-inner">
           <div class="section-heading" data-reveal>
-            <h2 id="events-title">What's coming up</h2>
+            <h2 id="events-title">More ways to gather</h2>
             <p>
-              No public event dates are posted right now. When a packing day,
-              food drive, fundraiser, or presentation is scheduled, the details
-              can be added here.
+              The Life of Riley is the only public date on the calendar right
+              now. Packing days, food drives, and community presentations are
+              added throughout the year.
             </p>
           </div>
 
           <!--
-            TODO (owner): Replace the example events below with real,
-            scheduled events. For each event, update the date, type, title,
-            and description. Change the "Event type" tags to real dates once
-            they are set. When there are no upcoming events, you can show only
-            the empty-state panel above the list.
+            TODO (owner): Add real, scheduled events to the list below. For
+            each event, update the date, type, title, and description, then
+            remove the `hidden` attribute from `.events-list`. When the list
+            is live you can drop the empty-state panel above it.
           -->
           <div class="empty-state" data-reveal>
-            <h3>No public events are scheduled right now</h3>
+            <h3>No other public dates are posted yet</h3>
             <p>
-              Packing days, food drives, and community events are added
-              throughout the year. Send us a message to be notified about the
-              next opportunity — and in the meantime, there's always a way to
+              Send us a message to be notified about the next packing day or
+              food drive &mdash; and in the meantime, there's always a way to
               help.
             </p>
             <a href="/pages/contact.html" class="button button-primary">Get Notified About Events</a>
@@ -256,7 +583,10 @@
 
     <a href="/pages/donate.html" class="floating-donate" data-donate-link>Donate Now</a>
 
-    <h1 class="marquee-container-header">Our Community Partners!</h1>
+    <!-- Demoted from <h1> to <h2>: the page's single <h1> is the featured
+         event title. The .marquee-container-header class carries all of the
+         styling, so this renders exactly as before. -->
+    <h2 class="marquee-container-header">Our Community Partners!</h2>
 
     <div class="marquee-container" aria-label="Back Pack Kidz community partners">
       <div class="marquee-track" id="marqueeTrack">
@@ -268,7 +598,7 @@
       <div class="footer-inner">
         <div class="footer-brand">
           <a href="/" class="footer-logo" aria-label="Back Pack Kidz Home">
-            <img src="../assets/backpack-kidz-logo.png"  width="44" height="44" loading="lazy">
+            <img src="../assets/backpack-kidz-logo.png" alt="" width="44" height="44" loading="lazy">
             <span>Back Pack Kidz</span>
           </a>
           <p>

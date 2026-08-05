@@ -532,7 +532,9 @@ h3 {
 .stacked-features article,
 .flow-step,
 .partner-types article,
-.faq-list article {
+.faq-list article,
+.event-detail-card,
+.event-sponsor-card {
   background: var(--white);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
@@ -548,7 +550,9 @@ h3 {
 .fact-card,
 .flow-step,
 .partner-types article,
-.faq-list article {
+.faq-list article,
+.event-detail-card,
+.event-sponsor-card {
   transition: transform 0.24s var(--ease), box-shadow 0.24s var(--ease), border-color 0.24s var(--ease);
 }
 
@@ -557,14 +561,17 @@ h3 {
 .fact-card:hover,
 .flow-step:hover,
 .partner-types article:hover,
-.faq-list article:hover {
+.faq-list article:hover,
+.event-detail-card:hover,
+.event-sponsor-card:hover {
   border-color: rgba(249, 115, 22, 0.28);
   box-shadow: 0 18px 36px rgba(15, 23, 42, 0.11);
   transform: translateY(-4px);
 }
 
 .impact-icon,
-.feature-icon {
+.feature-icon,
+.event-detail-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -3031,3 +3038,363 @@ h3 {
     max-height: 68px;
   }
 }
+
+/* ==========================================================================
+   Future Events page — featured event ("The Life of Riley") plus the
+   community appreciation band. Scoped to the `.events-page` body class so
+   the shared .event-card / .empty-state styles above stay untouched.
+   Card chrome, hover lift and icon pills are inherited from the shared
+   selector groups near the top of this file.
+   ========================================================================== */
+
+/* Hero — event title on the left, flyer on the right. */
+.events-page .event-hero-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(290px, 0.6fr);
+}
+
+.events-page .event-hero-copy h1 {
+  max-width: 16ch;
+  font-size: 4.1rem;
+}
+
+.events-page .event-hero-subtitle {
+  max-width: 30ch;
+  color: var(--navy);
+  font-size: 1.32rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.events-page .event-hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.1rem;
+  align-items: center;
+}
+
+.events-page .event-hero-meta dl {
+  display: grid;
+  gap: 0.3rem;
+  margin: 0;
+}
+
+.events-page .event-hero-meta dt {
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.events-page .event-hero-meta dd {
+  margin: 0;
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.events-page .event-hero-meta dd + dt {
+  margin-top: 0.5rem;
+}
+
+/* Calendar-style date badge. Solid colors carry the text; the brand
+   gradient is confined to the decorative accent bar. */
+.event-date-badge {
+  display: grid;
+  width: 98px;
+  flex: none;
+  overflow: hidden;
+  text-align: center;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+}
+
+.event-date-badge .event-date-month {
+  padding: 0.4rem 0.25rem;
+  color: var(--white);
+  background: var(--navy);
+  font-size: 0.8rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.event-date-badge .event-date-day {
+  padding: 0.4rem 0.25rem 0.1rem;
+  color: var(--navy);
+  font-size: 2.2rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.event-date-badge .event-date-year {
+  padding: 0 0.25rem 0.5rem;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  line-height: 1.4;
+}
+
+.event-date-badge::after {
+  content: "";
+  height: 5px;
+  background: var(--grad-orange);
+}
+
+/* Flyer showcase — shares the framed look of the home-page hero media. */
+.event-flyer-figure,
+.appreciation-art {
+  display: grid;
+  gap: 0.85rem;
+  justify-items: center;
+  margin: 0;
+}
+
+.event-flyer-frame,
+.appreciation-art-frame {
+  display: block;
+  overflow: hidden;
+  background: var(--surface);
+  border: 8px solid var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-strong);
+  transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+}
+
+.event-flyer-frame:hover,
+.appreciation-art-frame:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 28px 58px rgba(15, 23, 42, 0.2);
+}
+
+.event-flyer-frame img,
+.appreciation-art-frame img {
+  width: 100%;
+}
+
+.event-flyer-caption,
+.appreciation-art figcaption {
+  max-width: 36ch;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.55;
+  text-align: center;
+}
+
+/* Event detail cards (date, location, tickets, questions). */
+.events-page .event-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+.event-detail-card {
+  display: grid;
+  align-content: start;
+  gap: 0.3rem;
+  padding: 1.5rem;
+}
+
+.event-detail-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* The card is a grid, so the icon pill has to opt out of stretching. */
+.event-detail-card .event-detail-icon {
+  justify-self: start;
+}
+
+.event-detail-card h3 {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.event-detail-card strong {
+  color: var(--navy);
+  font-size: 1.1rem;
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+.event-detail-card p {
+  font-size: 0.93rem;
+}
+
+.event-detail-card .button-text {
+  margin-top: 0.35rem;
+  justify-self: start;
+}
+
+/* Event story band. */
+.events-page .event-story-section {
+  background: var(--surface);
+}
+
+/* Sponsor and supporter credits for this event. */
+.events-page .event-sponsor-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.event-sponsor-card {
+  display: grid;
+  gap: 0.5rem;
+  align-content: start;
+  justify-items: center;
+  padding: 1.75rem 1.5rem;
+  text-align: center;
+}
+
+.event-sponsor-card .event-sponsor-role {
+  color: var(--orange-dark);
+  font-size: 0.74rem;
+  font-weight: 900;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.event-sponsor-card strong {
+  color: var(--navy);
+  font-size: 1.08rem;
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+.event-sponsor-card p {
+  font-size: 0.93rem;
+}
+
+/* Community appreciation band for Mr. Leroy / Leroy's Fish Shack. */
+.appreciation-section {
+  background:
+    radial-gradient(circle at 12% 16%, rgba(249, 115, 22, 0.14), transparent 44%),
+    radial-gradient(circle at 88% 84%, rgba(15, 118, 110, 0.12), transparent 42%),
+    var(--orange-soft);
+}
+
+.appreciation-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(270px, 0.52fr);
+  gap: clamp(2rem, 5vw, 3.5rem);
+  align-items: center;
+}
+
+.appreciation-card {
+  display: grid;
+  gap: 1.15rem;
+  justify-items: start;
+  padding: clamp(1.5rem, 3vw, 2.4rem);
+  background: var(--white);
+  border: 1px solid rgba(249, 115, 22, 0.22);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+
+.appreciation-card .appreciation-lede {
+  color: var(--text);
+  font-size: 1.06rem;
+  line-height: 1.7;
+}
+
+.appreciation-facts {
+  display: grid;
+  gap: 0.65rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.appreciation-facts li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.65rem;
+  align-items: start;
+  color: var(--text);
+  font-size: 0.96rem;
+  line-height: 1.55;
+}
+
+.appreciation-facts svg {
+  width: 19px;
+  height: 19px;
+  margin-top: 0.18rem;
+  color: var(--orange-dark);
+}
+
+.appreciation-signoff {
+  color: var(--navy);
+  font-size: 1.02rem;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+@media (max-width: 1100px) {
+  .events-page .event-hero-grid,
+  .appreciation-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .events-page .event-hero-copy h1 {
+    font-size: 3.1rem;
+  }
+
+  .events-page .event-detail-grid,
+  .events-page .event-sponsor-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .event-flyer-figure,
+  .appreciation-art {
+    width: 100%;
+    max-width: 470px;
+    margin-inline: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .events-page .event-hero-copy h1 {
+    font-size: 2.45rem;
+  }
+
+  .events-page .event-hero-subtitle {
+    font-size: 1.12rem;
+  }
+
+  .events-page .event-detail-grid,
+  .events-page .event-sponsor-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .events-page .event-hero-meta {
+    gap: 0.9rem;
+  }
+
+  .event-flyer-frame,
+  .appreciation-art-frame {
+    border-width: 6px;
+  }
+
+  .appreciation-card {
+    padding: 1.35rem;
+  }
+
+  /* The hero buttons stretch full width at this breakpoint, so keep the
+     inline flyer link from doing the same. */
+  .event-detail-card .button-text,
+  .appreciation-card .button-text {
+    width: auto;
+  }
+}
+
