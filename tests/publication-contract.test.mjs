@@ -426,6 +426,28 @@ test("candidate check binds an exact two-file diff and rejects a direct slot edi
       "governed-publication-candidate"
     );
 
+    git(["checkout", "-b", "tampered-receipt", base.head]);
+    const attackerRestoreValue = "Attacker-selected rollback text.";
+    const tamperedReceipt = {
+      ...receipt,
+      source: { ...receipt.source, textSha256: textDigest(attackerRestoreValue) },
+      rollback: { ...receipt.rollback, restoreValue: attackerRestoreValue },
+    };
+    mkdirSync(join(root, "publication", "audit"), { recursive: true });
+    writeFileSync(join(root, targetFile), resultSource, "utf8");
+    writeFileSync(
+      join(root, "publication", "audit", `${proposal.proposalId}.json`),
+      `${JSON.stringify(tamperedReceipt, null, 2)}\n`,
+      "utf8"
+    );
+    git(["add", "."]);
+    git(["commit", "-m", "tampered receipt"]);
+    const tamperedHead = git(["rev-parse", "HEAD"]);
+    assert.throws(
+      () => validateCandidateDiff(root, { base: base.head, head: tamperedHead }),
+      /rollback value does not match the exact governed text/u
+    );
+
     git(["checkout", "-b", "direct-edit", base.head]);
     writeFileSync(join(root, targetFile), baseSource.replace("Original governed text.", "Unreceipted direct edit."), "utf8");
     git(["add", targetFile]);

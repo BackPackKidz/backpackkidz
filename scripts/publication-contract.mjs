@@ -964,6 +964,7 @@ export const validateCandidateDiff = (root, { base, head }) => {
   const baseSource = readGitFile(root, baseTree, targetChange.file);
   const headSource = readGitFile(root, headTree, targetChange.file);
   const expectedSource = applyProposalToSource(baseSource, receipt.proposal);
+  const baseValue = readSlotFromSource(baseSource, receipt.operation.slot);
 
   if (headSource !== expectedSource) {
     fail("Publication candidate target differs from deterministic proposal materialization.");
@@ -973,6 +974,12 @@ export const validateCandidateDiff = (root, { base, head }) => {
     receipt.result.fileSha256 !== fileDigest(expectedSource)
   ) {
     fail("Publication receipt file identities do not match the exact Git source and result.");
+  }
+  if (
+    receipt.source.textSha256 !== textDigest(baseValue) ||
+    receipt.rollback.restoreValue !== baseValue
+  ) {
+    fail("Publication receipt rollback value does not match the exact governed text in the Git base.");
   }
   verifyProposalInSource(headSource, receipt.proposal);
 
