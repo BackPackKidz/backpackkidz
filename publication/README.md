@@ -57,10 +57,17 @@ The command changes only the allowlisted slot and writes `publication/audit/<pro
 After a deploy preview or production deploy, verify the exact visible result:
 
 ```text
-npm run publication -- verify-live --proposal C:\path\to\proposal.json --url https://deploy-preview.example.netlify.app
+npm run publication -- verify-live --proposal C:\path\to\proposal.json --url https://deploy-preview-7--backpackkidz.netlify.app
 ```
 
-The live verifier only accepts HTTPS `backpackkidz.com` or `*.netlify.app` hosts.
+The live verifier only accepts these Back Pack Kidz deployment identities over HTTPS:
+
+- `backpackkidz.com`
+- `www.backpackkidz.com`
+- `backpackkidz.netlify.app`
+- `deploy-preview-<positive integer>--backpackkidz.netlify.app`
+
+Arbitrary `*.netlify.app` hosts, hostname suffix tricks, URL userinfo, non-default ports, and HTTP are rejected.
 
 ## Audit and rollback
 

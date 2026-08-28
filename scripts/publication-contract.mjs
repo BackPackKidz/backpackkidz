@@ -636,10 +636,11 @@ export const publicUrlForSlot = (baseUrl, slot) => {
   const allowedHost =
     url.hostname === "www.backpackkidz.com" ||
     url.hostname === "backpackkidz.com" ||
-    url.hostname.endsWith(".netlify.app");
+    url.hostname === "backpackkidz.netlify.app" ||
+    /^deploy-preview-[1-9]\d*--backpackkidz\.netlify\.app$/u.test(url.hostname);
 
-  if (!allowedHost || url.username || url.password) {
-    fail("Live verification URL must be backpackkidz.com or a Netlify deploy-preview host.");
+  if (!allowedHost || url.username || url.password || url.port) {
+    fail("Live verification URL must identify an approved Back Pack Kidz production or deploy-preview host without userinfo or a non-default port.");
   }
 
   const relative = definition.file

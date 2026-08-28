@@ -12,6 +12,7 @@ import {
   createProposal,
   createRollbackProposal,
   proposalDigest,
+  publicUrlForSlot,
   readSlotFromSource,
   textDigest,
   validateProposal,
@@ -201,4 +202,41 @@ test("proposal identity is stable across object key order", () => {
     schemaVersion: proposal.schemaVersion,
   };
   assert.equal(proposalDigest(proposal), proposalDigest(reordered));
+});
+
+test("live verification accepts only exact Back Pack Kidz deployment identities", () => {
+  const accepted = [
+    "https://backpackkidz.com",
+    "https://www.backpackkidz.com",
+    "https://backpackkidz.netlify.app",
+    "https://deploy-preview-7--backpackkidz.netlify.app",
+    "https://deploy-preview-12345--backpackkidz.netlify.app",
+  ];
+
+  for (const host of accepted) {
+    assert.equal(
+      publicUrlForSlot(host, "events.featured.summary"),
+      `${host}/pages/future-events`
+    );
+  }
+});
+
+test("live verification rejects unrelated, malformed, and insecure hosts", () => {
+  const rejected = [
+    "https://evil.netlify.app",
+    "https://deploy-preview-7--evil.netlify.app",
+    "https://backpackkidz.netlify.app.evil.example",
+    "https://deploy-preview-0--backpackkidz.netlify.app",
+    "http://backpackkidz.com",
+    "https://reviewer@backpackkidz.com",
+    "https://reviewer:password@deploy-preview-7--backpackkidz.netlify.app",
+    "https://backpackkidz.netlify.app:8443",
+  ];
+
+  for (const host of rejected) {
+    assert.throws(
+      () => publicUrlForSlot(host, "home.hero.summary"),
+      /Live verification (?:requires HTTPS|URL must identify an approved Back Pack Kidz)/u
+    );
+  }
 });
