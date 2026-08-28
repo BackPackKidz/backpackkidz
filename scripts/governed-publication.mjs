@@ -16,6 +16,7 @@ import {
   proposalDigest,
   readSlot,
   readSlotFromSource,
+  validateCandidateDiff,
   validateProposal,
   verifyReceiptInRoot,
 } from "./publication-contract.mjs";
@@ -35,6 +36,7 @@ Commands:
   verify --receipt <receipt.json>
   verify-live --proposal <proposal.json> --url <https://site-or-preview>
   rollback-preview --receipt <receipt.json> --id <new-proposal-id>
+  candidate-check --base <exact-base-sha> --head <exact-head-sha>
 
 Allowlisted slots:
 ${Object.entries(SLOT_DEFINITIONS)
@@ -181,6 +183,11 @@ const main = async () => {
       });
       printJson(proposal);
       process.stderr.write(`Rollback proposal identity: ${proposalDigest(proposal)}\n`);
+      break;
+    }
+    case "candidate-check": {
+      requireExactOptions(options, ["base", "head"]);
+      printJson(validateCandidateDiff(root, { base: options.base, head: options.head }));
       break;
     }
     default:

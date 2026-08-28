@@ -15,6 +15,9 @@ jobs:
     steps:
       - name: Check out the exact candidate
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
 
       - name: Use Node.js 24
         uses: actions/setup-node@v4
@@ -27,3 +30,6 @@ jobs:
 
       - name: Verify build, tests, links, accessibility, responsive baseline, and security boundaries
         run: npm run check
+
+      - name: Verify exact governed candidate diff and receipt
+        run: npm run publication -- candidate-check --base "${{ github.event.pull_request.base.sha }}" --head "${{ github.event.pull_request.head.sha }}"

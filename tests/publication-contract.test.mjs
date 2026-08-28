@@ -14,11 +14,13 @@ import {
   createProposal,
   createRollbackProposal,
   fetchPublicSlotResponse,
+  fileDigest,
   proposalDigest,
   publicUrlForSlot,
   readSlotFromSource,
   resolveSlotPath,
   textDigest,
+  validateCandidateDiff,
   validateProposal,
   verifyProposalInSource,
 } from "../scripts/publication-contract.mjs";
@@ -185,6 +187,16 @@ test("materializes an exact proposal deterministically", () => {
   });
 });
 
+test("preserves checkout line endings while keeping a Git-canonical file identity", () => {
+  const proposal = proposalFor();
+  const lfSource = homeSource().replace(/\r\n/gu, "\n");
+  const crlfSource = lfSource.replace(/\n/gu, "\r\n");
+  const result = applyProposalToSource(crlfSource, proposal);
+
+  assert.equal(result.replace(/\r\n/gu, "").includes("\n"), false);
+  assert.equal(fileDigest(result), fileDigest(result.replace(/\r\n/gu, "\n")));
+});
+
 test("verification catches a wrong result", () => {
   const proposal = proposalFor();
   assert.throws(() => verifyProposalInSource(homeSource(), proposal), /Verification failed/u);
@@ -209,12 +221,12 @@ test("a guarded inverse proposal restores the previous public value", () => {
       head: proposal.base.head,
       tree: proposal.base.tree,
       file: SLOT_DEFINITIONS[proposal.operation.slot].file,
-      fileSha256: textDigest(immutableBeforeSource),
+      fileSha256: fileDigest(immutableBeforeSource),
       textSha256: textDigest(beforeValue),
     },
     result: {
       file: SLOT_DEFINITIONS[proposal.operation.slot].file,
-      fileSha256: textDigest(afterSource),
+      fileSha256: fileDigest(afterSource),
       textSha256: textDigest(proposal.operation.value),
     },
     verification: { status: "passed", verifiedAt: materializedAt },
@@ -334,6 +346,99 @@ test("proposal identity is stable across object key order", () => {
     schemaVersion: proposal.schemaVersion,
   };
   assert.equal(proposalDigest(proposal), proposalDigest(reordered));
+});
+
+test("candidate check binds an exact two-file diff and rejects a direct slot edit", () => {
+  const parent = mkdtempSync(join(tmpdir(), "bpk-publication-candidate-"));
+  const root = join(parent, "repo");
+  const targetFile = SLOT_DEFINITIONS["home.hero.summary"].file;
+  const baseSource = `<!doctype html>\n<!-- governed-publication:home.hero.summary:start -->\n  Original governed text.\n<!-- governed-publication:home.hero.summary:end -->\n`;
+  const git = (args) => execFileSync("git", args, { cwd: root, encoding: "utf8" }).trim();
+
+  try {
+    mkdirSync(join(root, "scripts"), { recursive: true });
+    mkdirSync(join(root, "BackPackKidzWebsite"), { recursive: true });
+    writeFileSync(join(root, "scripts", "publication-contract.mjs"), "trusted contract baseline\n", "utf8");
+    writeFileSync(join(root, targetFile), baseSource, "utf8");
+    git(["init", "-b", "main"]);
+    git(["config", "user.name", "Publication Test"]);
+    git(["config", "user.email", "publication-test@example.invalid"]);
+    git(["add", "."]);
+    git(["commit", "-m", "base"]);
+
+    const base = { head: git(["rev-parse", "HEAD"]), tree: git(["rev-parse", "HEAD^{tree}"]) };
+    const proposal = createProposal({
+      proposalId: "pub-candidate-check-test",
+      base,
+      slot: "home.hero.summary",
+      value: "Exact reviewed candidate text.",
+      now: CREATED_AT,
+    });
+    const resultSource = applyProposalToSource(baseSource, proposal);
+    const materializedAt = CREATED_AT.toISOString();
+    const receipt = {
+      schemaVersion: 1,
+      kind: "governed-publication-candidate-receipt",
+      proposal,
+      proposalId: proposal.proposalId,
+      proposalDigest: proposalDigest(proposal),
+      operation: proposal.operation,
+      source: {
+        repository: REPOSITORY,
+        head: base.head,
+        tree: base.tree,
+        file: targetFile,
+        fileSha256: fileDigest(baseSource),
+        textSha256: textDigest("Original governed text."),
+      },
+      result: {
+        file: targetFile,
+        fileSha256: fileDigest(resultSource),
+        textSha256: textDigest(proposal.operation.value),
+      },
+      verification: { status: "passed", verifiedAt: materializedAt },
+      publicationAuthority: {
+        boundary: "authenticated-github-pull-request-review-and-merge",
+        status: "pending-human-approval",
+        actorReference: "recorded by GitHub on review and merge",
+      },
+      rollback: {
+        type: "inverse_set_public_text_through_new_pull_request",
+        expectedCurrentTextSha256: textDigest(proposal.operation.value),
+        restoreValue: "Original governed text.",
+      },
+      materializedAt,
+    };
+
+    mkdirSync(join(root, "publication", "audit"), { recursive: true });
+    writeFileSync(join(root, targetFile), resultSource, "utf8");
+    writeFileSync(
+      join(root, "publication", "audit", `${proposal.proposalId}.json`),
+      `${JSON.stringify(receipt, null, 2)}\n`,
+      "utf8"
+    );
+    git(["add", "."]);
+    git(["commit", "-m", "candidate"]);
+    const candidateHead = git(["rev-parse", "HEAD"]);
+
+    assert.equal(
+      validateCandidateDiff(root, { base: base.head, head: candidateHead }).mode,
+      "governed-publication-candidate"
+    );
+
+    git(["checkout", "-b", "direct-edit", base.head]);
+    writeFileSync(join(root, targetFile), baseSource.replace("Original governed text.", "Unreceipted direct edit."), "utf8");
+    git(["add", targetFile]);
+    git(["commit", "-m", "direct edit"]);
+    const directHead = git(["rev-parse", "HEAD"]);
+
+    assert.throws(
+      () => validateCandidateDiff(root, { base: base.head, head: directHead }),
+      /exactly one allowlisted slot file and add exactly one receipt/u
+    );
+  } finally {
+    rmSync(parent, { recursive: true, force: true });
+  }
 });
 
 test("live verification accepts only exact Back Pack Kidz deployment identities", () => {

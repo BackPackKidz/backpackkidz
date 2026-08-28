@@ -54,6 +54,10 @@ npm run publication -- materialize --proposal C:\path\to\proposal.json
 
 The command changes only the allowlisted slot and writes `publication/audit/<proposal-id>.json`. Commit those exact files, push the feature branch, and open a Draft PR. CI verifies the contract and the preserved site boundaries. An authorized human reviews the human-readable diff and exact proposal digest, marks the PR ready, and approves. GitHub merges only that reviewed candidate. Netlify then follows its existing `main` deployment path.
 
+For every PR, CI checks out the exact candidate SHA with full history. Once this lane exists on the PR base, any change to an allowlisted slot or `publication/audit/` must be exactly two files: one modified allowlisted slot and one newly added receipt. The check validates the receipt against the exact PR base HEAD/TREE, recreates the expected target from the immutable base blob and embedded proposal, and requires the candidate Git blob to match byte-for-byte. Direct marker edits, missing or renamed receipts, extra files, stale bases, and non-deterministic results fail closed. Ordinary PRs that do not touch a governed slot or audit receipt continue through the same build/test/static checks without being misclassified as publication candidates.
+
+Governed file hashes use Git-canonical LF text identities while materialization preserves the checkout's existing line-ending style. Receipts therefore verify consistently after commit and re-checkout on Windows or Linux.
+
 After a deploy preview or production deploy, verify the exact visible result:
 
 ```text

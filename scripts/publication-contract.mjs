@@ -90,6 +90,8 @@ const stableValue = (value) => {
 export const canonicalJson = (value) => JSON.stringify(stableValue(value));
 export const proposalDigest = (proposal) => `sha256:${sha256(canonicalJson(proposal))}`;
 export const textDigest = (value) => `sha256:${sha256(value)}`;
+const normalizeGitText = (value) => value.replace(/\r\n?/gu, "\n");
+export const fileDigest = (value) => textDigest(normalizeGitText(value));
 
 const fail = (message) => {
   throw new Error(message);
@@ -345,11 +347,12 @@ export const applyProposalToSource = (source, proposal) => {
     fail(`Slot ${slot} start marker must be on its own line.`);
   }
 
+  const newline = source.includes("\r\n") ? "\r\n" : "\n";
   const textIndentation = `${indentation}  `;
   const rendered = wrapText(encodeHtmlText(value), Math.max(40, 88 - textIndentation.length))
     .map((line) => `${textIndentation}${line}`)
-    .join("\n");
-  const replacement = `\n${rendered}\n${indentation}`;
+    .join(newline);
+  const replacement = `${newline}${rendered}${newline}${indentation}`;
   const nextSource = `${source.slice(0, location.contentStart)}${replacement}${source.slice(location.contentEnd)}`;
 
   if (readSlotFromSource(nextSource, slot) !== value) {
@@ -440,7 +443,7 @@ export const readSlot = (root, slot) => {
     slot,
     file,
     value: readSlotFromSource(source, slot),
-    sourceSha256: textDigest(source),
+    sourceSha256: fileDigest(source),
   };
 };
 
@@ -634,12 +637,12 @@ export const materializeProposal = (root, proposal, now = new Date()) => {
       head: proposal.base.head,
       tree: proposal.base.tree,
       file: preview.file,
-      fileSha256: textDigest(immutableSource.source),
+      fileSha256: fileDigest(immutableSource.source),
       textSha256: textDigest(immutableSource.value),
     },
     result: {
       file: preview.file,
-      fileSha256: textDigest(afterSource),
+      fileSha256: fileDigest(afterSource),
       textSha256: textDigest(preview.after),
     },
     verification: {
@@ -767,7 +770,7 @@ export const createRollbackProposal = ({ root, receipt, base, proposalId, now = 
   });
 
   if (
-    textDigest(immutableSource.source) !== receipt.source.fileSha256 ||
+    fileDigest(immutableSource.source) !== receipt.source.fileSha256 ||
     textDigest(immutableSource.value) !== receipt.source.textSha256 ||
     immutableSource.value !== receipt.rollback.restoreValue
   ) {
@@ -809,6 +812,182 @@ export const verifyReceiptInRoot = (root, receipt) => {
   };
 };
 
+const readGitFile = (root, tree, file) => {
+  try {
+    return execFileSync("git", ["show", `${tree}:${file}`], {
+      cwd: root,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+  } catch {
+    fail(`Required Git file is unavailable: ${file}.`);
+  }
+};
+
+const changedFilesBetween = (root, base, head) => {
+  const output = execFileSync(
+    "git",
+    ["diff", "--name-status", "--no-renames", "-z", base, head],
+    { cwd: root, encoding: "utf8" }
+  );
+  const tokens = output.split("\0");
+
+  if (tokens.at(-1) === "") {
+    tokens.pop();
+  }
+
+  if (tokens.length % 2 !== 0) {
+    fail("Git returned a malformed candidate diff.");
+  }
+
+  const changes = [];
+  for (let index = 0; index < tokens.length; index += 2) {
+    changes.push({ status: tokens[index], file: tokens[index + 1] });
+  }
+  return changes;
+};
+
+const gitPathExists = (root, revision, file) => {
+  try {
+    execFileSync("git", ["cat-file", "-e", `${revision}:${file}`], {
+      cwd: root,
+      stdio: "ignore",
+    });
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+export const validateCandidateDiff = (root, { base, head }) => {
+  for (const [label, value] of [["base", base], ["head", head]]) {
+    if (typeof value !== "string" || !/^[a-f0-9]{40}$/u.test(value)) {
+      fail(`Candidate ${label} must be an exact 40-character Git identity.`);
+    }
+  }
+
+  let actualHead;
+  let baseTree;
+  let headTree;
+
+  try {
+    actualHead = gitOutput(root, ["rev-parse", "HEAD"]);
+    baseTree = gitOutput(root, ["rev-parse", `${base}^{tree}`]);
+    headTree = gitOutput(root, ["rev-parse", `${head}^{tree}`]);
+    execFileSync("git", ["merge-base", "--is-ancestor", base, head], {
+      cwd: root,
+      stdio: "ignore",
+    });
+  } catch {
+    fail("Candidate base/head are unavailable or the base is not an ancestor of the head.");
+  }
+
+  if (actualHead !== head) {
+    fail(`Candidate check requires exact HEAD ${head}; current HEAD is ${actualHead}.`);
+  }
+
+  const changes = changedFilesBetween(root, base, head);
+  const changedFiles = changes.map(({ file }) => file);
+  const contractPath = "scripts/publication-contract.mjs";
+
+  if (!gitPathExists(root, base, contractPath)) {
+    const requiredBootstrapChanges = new Map([
+      [".github/workflows/governed-publication-check.yml", "A"],
+      ["BackPackKidzWebsite/index.html", "M"],
+      ["BackPackKidzWebsite/pages/future-events.html", "M"],
+      ["publication/README.md", "A"],
+      ["publication/proposal.schema.json", "A"],
+      ["scripts/governed-publication.mjs", "A"],
+      [contractPath, "A"],
+      ["tests/publication-contract.test.mjs", "A"],
+    ]);
+
+    for (const [file, status] of requiredBootstrapChanges) {
+      if (!changes.some((change) => change.file === file && change.status === status)) {
+        fail(`Governed-lane bootstrap is missing required ${status} change: ${file}.`);
+      }
+    }
+
+    if (changedFiles.some((file) => file.startsWith("publication/audit/"))) {
+      fail("Governed-lane bootstrap cannot include a publication receipt.");
+    }
+
+    return { status: "passed", mode: "governed-lane-bootstrap", base, head, headTree, changedFiles };
+  }
+
+  const slotFiles = new Set(Object.values(SLOT_DEFINITIONS).map(({ file }) => file));
+  const governedChanges = changes.filter(
+    ({ file }) => slotFiles.has(file) || file.startsWith("publication/audit/")
+  );
+
+  if (governedChanges.length === 0) {
+    return { status: "passed", mode: "non-publication-change", base, head, headTree, changedFiles };
+  }
+
+  if (changes.length !== 2) {
+    fail("A publication candidate must change exactly one allowlisted slot file and add exactly one receipt.");
+  }
+
+  const targetChange = changes.find(({ file }) => slotFiles.has(file));
+  const receiptChange = changes.find(({ file }) => file.startsWith("publication/audit/"));
+
+  if (targetChange?.status !== "M" || receiptChange?.status !== "A") {
+    fail("A publication candidate requires one modified allowlisted slot and one newly added receipt.");
+  }
+
+  const receiptMatch = /^publication\/audit\/(pub-[a-z0-9][a-z0-9-]{5,63})\.json$/u.exec(receiptChange.file);
+  if (!receiptMatch) {
+    fail("Publication receipt path does not match its governed proposal identity.");
+  }
+
+  let receipt;
+  try {
+    receipt = JSON.parse(readGitFile(root, headTree, receiptChange.file));
+  } catch (error) {
+    fail(`Publication receipt is not valid JSON: ${error.message}`);
+  }
+  validateReceipt(receipt);
+
+  if (receipt.proposalId !== receiptMatch[1]) {
+    fail("Publication receipt filename does not match its proposalId.");
+  }
+  if (
+    receipt.source.head !== base ||
+    receipt.source.tree !== baseTree ||
+    receipt.source.file !== targetChange.file ||
+    receipt.result.file !== targetChange.file ||
+    getSlotDefinition(receipt.operation.slot)?.file !== targetChange.file
+  ) {
+    fail("Publication receipt does not bind the exact PR base and allowlisted target.");
+  }
+
+  const baseSource = readGitFile(root, baseTree, targetChange.file);
+  const headSource = readGitFile(root, headTree, targetChange.file);
+  const expectedSource = applyProposalToSource(baseSource, receipt.proposal);
+
+  if (headSource !== expectedSource) {
+    fail("Publication candidate target differs from deterministic proposal materialization.");
+  }
+  if (
+    receipt.source.fileSha256 !== fileDigest(baseSource) ||
+    receipt.result.fileSha256 !== fileDigest(expectedSource)
+  ) {
+    fail("Publication receipt file identities do not match the exact Git source and result.");
+  }
+  verifyProposalInSource(headSource, receipt.proposal);
+
+  return {
+    status: "passed",
+    mode: "governed-publication-candidate",
+    base,
+    head,
+    headTree,
+    proposalId: receipt.proposalId,
+    proposalDigest: receipt.proposalDigest,
+    changedFiles,
+  };
+};
+
 export const allowedCommands = Object.freeze([
   "read",
   "propose",
@@ -818,6 +997,7 @@ export const allowedCommands = Object.freeze([
   "verify",
   "verify-live",
   "rollback-preview",
+  "candidate-check",
 ]);
 
 export const assertAllowedCommand = (command) => {
