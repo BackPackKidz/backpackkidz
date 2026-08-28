@@ -7,13 +7,13 @@ import {
   assertAllowedCommand,
   createProposal,
   createRollbackProposal,
+  fetchPublicSlotResponse,
   formatPreview,
   getGitIdentity,
   loadJson,
   materializeProposal,
   previewProposal,
   proposalDigest,
-  publicUrlForSlot,
   readSlot,
   readSlotFromSource,
   validateProposal,
@@ -143,8 +143,7 @@ const main = async () => {
     case "verify-live": {
       requireExactOptions(options, ["proposal", "url"]);
       const proposal = validateProposal(loadJson(resolve(options.proposal)));
-      const url = publicUrlForSlot(options.url, proposal.operation.slot);
-      const response = await fetch(url, { headers: { Accept: "text/html" }, redirect: "follow" });
+      const { response, url } = await fetchPublicSlotResponse(options.url, proposal.operation.slot);
 
       if (!response.ok) {
         throw new Error(`Live verification request failed with HTTP ${response.status}.`);

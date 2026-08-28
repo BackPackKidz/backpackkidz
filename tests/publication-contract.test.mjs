@@ -11,6 +11,7 @@ import {
   assertBaseIdentity,
   createProposal,
   createRollbackProposal,
+  fetchPublicSlotResponse,
   proposalDigest,
   publicUrlForSlot,
   readSlotFromSource,
@@ -180,6 +181,49 @@ test("a guarded inverse proposal restores the previous public value", () => {
     /digest does not match/u
   );
 
+  assert.throws(
+    () =>
+      createRollbackProposal({
+        receipt: {
+          ...receipt,
+          rollback: { ...receipt.rollback, restoreValue: "Attacker-selected replacement text." },
+        },
+        base: BASE,
+        proposalId: "pub-rollback-altered-value",
+        now: new Date("2026-08-28T12:04:00.000Z"),
+      }),
+    /does not match the recorded source text identity/u
+  );
+
+  assert.throws(
+    () =>
+      createRollbackProposal({
+        receipt: {
+          ...receipt,
+          result: { ...receipt.result, textSha256: textDigest("Unrecorded result.") },
+          rollback: { ...receipt.rollback, expectedCurrentTextSha256: textDigest("Unrecorded result.") },
+        },
+        base: BASE,
+        proposalId: "pub-rollback-altered-result",
+        now: new Date("2026-08-28T12:04:00.000Z"),
+      }),
+    /does not match the recorded operation/u
+  );
+
+  assert.throws(
+    () =>
+      createRollbackProposal({
+        receipt: {
+          ...receipt,
+          rollback: { ...receipt.rollback, extraAuthority: true },
+        },
+        base: BASE,
+        proposalId: "pub-rollback-extra-field",
+        now: new Date("2026-08-28T12:04:00.000Z"),
+      }),
+    /unsupported field "extraAuthority"/u
+  );
+
   const rollback = createRollbackProposal({
     receipt,
     base: BASE,
@@ -239,4 +283,61 @@ test("live verification rejects unrelated, malformed, and insecure hosts", () =>
       /Live verification (?:requires HTTPS|URL must identify an approved Back Pack Kidz)/u
     );
   }
+});
+
+test("live verification rejects an unapproved redirect before requesting its destination", async () => {
+  const requested = [];
+  const fetchImpl = async (url, options) => {
+    requested.push({ url, redirect: options.redirect });
+    return {
+      status: 302,
+      url,
+      headers: new Headers({ location: "https://evil.netlify.app/pages/future-events" }),
+    };
+  };
+
+  await assert.rejects(
+    fetchPublicSlotResponse(
+      "https://deploy-preview-7--backpackkidz.netlify.app",
+      "events.featured.summary",
+      fetchImpl
+    ),
+    /approved Back Pack Kidz/u
+  );
+  assert.deepEqual(requested, [
+    {
+      url: "https://deploy-preview-7--backpackkidz.netlify.app/pages/future-events",
+      redirect: "manual",
+    },
+  ]);
+});
+
+test("live verification follows only an exact governed-slot redirect between approved hosts", async () => {
+  const requested = [];
+  const fetchImpl = async (url, options) => {
+    requested.push({ url, redirect: options.redirect });
+
+    if (requested.length === 1) {
+      return {
+        status: 301,
+        url,
+        headers: new Headers({ location: "https://www.backpackkidz.com/pages/future-events" }),
+      };
+    }
+
+    return { status: 200, ok: true, url, headers: new Headers() };
+  };
+
+  const result = await fetchPublicSlotResponse(
+    "https://backpackkidz.com",
+    "events.featured.summary",
+    fetchImpl
+  );
+
+  assert.equal(result.url, "https://www.backpackkidz.com/pages/future-events");
+  assert.equal(result.response.status, 200);
+  assert.deepEqual(requested, [
+    { url: "https://backpackkidz.com/pages/future-events", redirect: "manual" },
+    { url: "https://www.backpackkidz.com/pages/future-events", redirect: "manual" },
+  ]);
 });

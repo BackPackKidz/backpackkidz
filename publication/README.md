@@ -67,7 +67,7 @@ The live verifier only accepts these Back Pack Kidz deployment identities over H
 - `backpackkidz.netlify.app`
 - `deploy-preview-<positive integer>--backpackkidz.netlify.app`
 
-Arbitrary `*.netlify.app` hosts, hostname suffix tricks, URL userinfo, non-default ports, and HTTP are rejected.
+Arbitrary `*.netlify.app` hosts, hostname suffix tricks, URL userinfo, non-default ports, and HTTP are rejected. Redirects are followed manually only when every destination is the exact governed-slot path on one of the same approved Back Pack Kidz hosts; an arbitrary-host or arbitrary-path redirect fails before its destination is requested.
 
 ## Audit and rollback
 

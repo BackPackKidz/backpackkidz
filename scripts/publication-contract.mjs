@@ -45,6 +45,11 @@ const RECEIPT_KEYS = new Set([
   "rollback",
   "materializedAt",
 ]);
+const RECEIPT_SOURCE_KEYS = new Set(["repository", "head", "tree", "file", "fileSha256", "textSha256"]);
+const RECEIPT_RESULT_KEYS = new Set(["file", "fileSha256", "textSha256"]);
+const RECEIPT_VERIFICATION_KEYS = new Set(["status", "verifiedAt"]);
+const RECEIPT_AUTHORITY_KEYS = new Set(["boundary", "status", "actorReference"]);
+const RECEIPT_ROLLBACK_KEYS = new Set(["type", "expectedCurrentTextSha256", "restoreValue"]);
 
 const SECRET_PATTERNS = [
   /-----BEGIN [A-Z0-9 ]*(?:PRIVATE KEY|CREDENTIALS)[A-Z0-9 ]*-----/i,
@@ -96,6 +101,23 @@ const assertOnlyKeys = (value, allowed, label) => {
     if (!allowed.has(key)) {
       fail(`${label} contains unsupported field "${key}".`);
     }
+  }
+};
+
+const assertExactKeys = (value, expected, label) => {
+  assertPlainObject(value, label);
+  assertOnlyKeys(value, expected, label);
+
+  for (const key of expected) {
+    if (!Object.prototype.hasOwnProperty.call(value, key)) {
+      fail(`${label} is missing required field "${key}".`);
+    }
+  }
+};
+
+const assertTextDigest = (value, label) => {
+  if (typeof value !== "string" || !/^sha256:[a-f0-9]{64}$/u.test(value)) {
+    fail(`${label} must be a SHA-256 text identity.`);
   }
 };
 
@@ -550,12 +572,59 @@ export const validateReceipt = (receipt) => {
     fail("Receipt proposal digest does not match the embedded proposal.");
   }
 
+  assertExactKeys(receipt.source, RECEIPT_SOURCE_KEYS, "receipt.source");
+  assertExactKeys(receipt.result, RECEIPT_RESULT_KEYS, "receipt.result");
+  assertExactKeys(receipt.verification, RECEIPT_VERIFICATION_KEYS, "receipt.verification");
+  assertExactKeys(receipt.publicationAuthority, RECEIPT_AUTHORITY_KEYS, "receipt.publicationAuthority");
+  assertExactKeys(receipt.rollback, RECEIPT_ROLLBACK_KEYS, "receipt.rollback");
+
+  for (const [label, digest] of [
+    ["receipt.source.fileSha256", receipt.source.fileSha256],
+    ["receipt.source.textSha256", receipt.source.textSha256],
+    ["receipt.result.fileSha256", receipt.result.fileSha256],
+    ["receipt.result.textSha256", receipt.result.textSha256],
+    ["receipt.rollback.expectedCurrentTextSha256", receipt.rollback.expectedCurrentTextSha256],
+  ]) {
+    assertTextDigest(digest, label);
+  }
+
   if (receipt.result?.file !== SLOT_DEFINITIONS[receipt.operation.slot].file || receipt.source?.file !== receipt.result.file) {
     fail("Receipt file does not match the allowlisted slot path.");
   }
 
   if (receipt.rollback?.restoreValue !== normalizePublicText(receipt.rollback?.restoreValue)) {
     fail("Receipt rollback value is malformed.");
+  }
+
+  if (receipt.source.textSha256 !== textDigest(receipt.rollback.restoreValue)) {
+    fail("Receipt rollback value does not match the recorded source text identity.");
+  }
+
+  if (receipt.result.textSha256 !== textDigest(receipt.operation.value)) {
+    fail("Receipt result text identity does not match the recorded operation.");
+  }
+
+  if (receipt.rollback.expectedCurrentTextSha256 !== receipt.result.textSha256) {
+    fail("Receipt rollback guard does not match the recorded result.");
+  }
+
+  if (
+    receipt.rollback.type !== "inverse_set_public_text_through_new_pull_request" ||
+    receipt.verification.status !== "passed" ||
+    receipt.verification.verifiedAt !== receipt.materializedAt ||
+    receipt.publicationAuthority.boundary !== "authenticated-github-pull-request-review-and-merge" ||
+    receipt.publicationAuthority.status !== "pending-human-approval" ||
+    receipt.publicationAuthority.actorReference !== "recorded by GitHub on review and merge"
+  ) {
+    fail("Receipt fixed audit fields are malformed.");
+  }
+
+  if (
+    typeof receipt.materializedAt !== "string" ||
+    !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z$/u.test(receipt.materializedAt) ||
+    Number.isNaN(Date.parse(receipt.materializedAt))
+  ) {
+    fail("Receipt materializedAt is not a valid RFC 3339 UTC timestamp.");
   }
 
   return receipt;
@@ -648,6 +717,53 @@ export const publicUrlForSlot = (baseUrl, slot) => {
     .replace(/index\.html$/u, "")
     .replace(/\.html$/u, "");
   return new URL(relative, `${url.origin}/`).toString();
+};
+
+const LIVE_REDIRECT_STATUSES = new Set([301, 302, 303, 307, 308]);
+const MAX_LIVE_REDIRECTS = 5;
+
+export const fetchPublicSlotResponse = async (baseUrl, slot, fetchImpl = globalThis.fetch) => {
+  if (typeof fetchImpl !== "function") {
+    fail("Live verification requires a fetch implementation.");
+  }
+
+  let url = publicUrlForSlot(baseUrl, slot);
+
+  for (let redirectCount = 0; redirectCount <= MAX_LIVE_REDIRECTS; redirectCount += 1) {
+    const response = await fetchImpl(url, {
+      headers: { Accept: "text/html" },
+      redirect: "manual",
+    });
+
+    if (!LIVE_REDIRECT_STATUSES.has(response.status)) {
+      if (response.url && new URL(response.url, url).toString() !== url) {
+        fail("Live verification response URL changed outside the approved redirect policy.");
+      }
+
+      return { response, url };
+    }
+
+    if (redirectCount === MAX_LIVE_REDIRECTS) {
+      fail(`Live verification exceeded ${MAX_LIVE_REDIRECTS} approved redirects.`);
+    }
+
+    const location = response.headers?.get?.("location");
+
+    if (!location) {
+      fail("Live verification redirect is missing a Location header.");
+    }
+
+    const destination = new URL(location, url).toString();
+    const approvedDestination = publicUrlForSlot(destination, slot);
+
+    if (destination !== approvedDestination) {
+      fail("Live verification redirect must target the exact governed slot URL on an approved Back Pack Kidz host.");
+    }
+
+    url = approvedDestination;
+  }
+
+  fail("Live verification redirect handling failed closed.");
 };
 
 export { normalizePublicText, sha256 };
