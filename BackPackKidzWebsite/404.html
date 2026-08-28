@@ -27,6 +27,21 @@
             max-width: 500px;
         }
 
+        .skip-link {
+            position: fixed;
+            top: 8px;
+            left: 8px;
+            padding: 10px 14px;
+            color: #ffffff;
+            background: #343a40;
+            transform: translateY(-150%);
+            z-index: 10;
+        }
+
+        .skip-link:focus {
+            transform: translateY(0);
+        }
+
         .error-code {
             font-size: 8rem;
             font-weight: 800;
@@ -70,18 +85,25 @@
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
         }
+
+        @media (prefers-reduced-motion: reduce) {
+            .error-code {
+                animation: none;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <div class="container">
+    <a class="skip-link" href="#content">Skip to main content</a>
+    <main id="content" class="container">
         <div class="error-code">404</div>
         <h1 class="error-title">Oops! Page Not Found</h1>
         <p class="error-message">
             The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.
         </p>
         <a href="/" class="home-btn">Go Back Home</a>
-    </div>
+    </main>
 
 </body>
 </html>
