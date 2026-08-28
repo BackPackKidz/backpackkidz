@@ -174,6 +174,7 @@ const main = async () => {
       }
 
       const proposal = createRollbackProposal({
+        root,
         receipt,
         base: getGitIdentity(root),
         proposalId: options.id,

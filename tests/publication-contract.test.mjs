@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { linkSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import test from "node:test";
 import {
@@ -15,6 +17,7 @@ import {
   proposalDigest,
   publicUrlForSlot,
   readSlotFromSource,
+  resolveSlotPath,
   textDigest,
   validateProposal,
   verifyProposalInSource,
@@ -24,6 +27,10 @@ const ROOT = resolve(import.meta.dirname, "..");
 const BASE = {
   head: "65c57a2a0b24841663800106a17a8570736eccef",
   tree: "39829fe652d4f59207976bd6e201b5268c321b43",
+};
+const GOVERNED_BASE = {
+  head: execFileSync("git", ["rev-parse", "HEAD"], { cwd: ROOT, encoding: "utf8" }).trim(),
+  tree: execFileSync("git", ["rev-parse", "HEAD^{tree}"], { cwd: ROOT, encoding: "utf8" }).trim(),
 };
 const CREATED_AT = new Date("2026-08-28T12:00:00.000Z");
 
@@ -38,12 +45,21 @@ const proposalFor = (overrides = {}) =>
   });
 
 const homeSource = () => readFileSync(join(ROOT, SLOT_DEFINITIONS["home.hero.summary"].file), "utf8");
+const immutableHomeSource = () =>
+  execFileSync("git", ["show", `${GOVERNED_BASE.tree}:${SLOT_DEFINITIONS["home.hero.summary"].file}`], {
+    cwd: ROOT,
+    encoding: "utf8",
+  });
 
-test("reads the exact current public text from an allowlisted slot", () => {
+test("reads normalized public text without hardcoding mutable slot copy", () => {
+  const fixture = `<!-- governed-publication:home.hero.summary:start -->
+    Public &amp; normalized fixture text.
+  <!-- governed-publication:home.hero.summary:end -->`;
   assert.equal(
-    readSlotFromSource(homeSource(), "home.hero.summary"),
-    "Feeding children in Charlotte County when school meals aren't available — because no child should go hungry on the weekend."
+    readSlotFromSource(fixture, "home.hero.summary"),
+    "Public & normalized fixture text."
   );
+  assert.ok(readSlotFromSource(homeSource(), "home.hero.summary").length > 0);
 });
 
 test("rejects a stale or changed base identity", () => {
@@ -80,6 +96,50 @@ test("rejects operations outside the closed allowlist", () => {
     () => validateProposal({ ...proposal, operation: { ...proposal.operation, slot: "donate.paypal.url" } }),
     /not allowlisted/u
   );
+
+  for (const inheritedName of ["toString", "constructor", "__proto__"]) {
+    assert.throws(
+      () => validateProposal({ ...proposal, operation: { ...proposal.operation, slot: inheritedName } }),
+      /not allowlisted/u
+    );
+  }
+});
+
+test("rejects an allowlisted path routed through a symbolic link or reparse point", () => {
+  const parent = mkdtempSync(join(tmpdir(), "bpk-publication-path-"));
+  const root = join(parent, "repo");
+  const outside = join(parent, "outside");
+
+  try {
+    mkdirSync(root);
+    mkdirSync(outside);
+    writeFileSync(join(outside, "index.html"), "outside", "utf8");
+    symlinkSync(outside, join(root, "BackPackKidzWebsite"), process.platform === "win32" ? "junction" : "dir");
+    assert.throws(
+      () => resolveSlotPath(root, "home.hero.summary"),
+      /symbolic links or reparse points/u
+    );
+  } finally {
+    rmSync(parent, { recursive: true, force: true });
+  }
+});
+
+test("rejects an allowlisted target hard-linked to another file", () => {
+  const parent = mkdtempSync(join(tmpdir(), "bpk-publication-hardlink-"));
+  const root = join(parent, "repo");
+  const outside = join(parent, "outside.html");
+
+  try {
+    mkdirSync(join(root, "BackPackKidzWebsite"), { recursive: true });
+    writeFileSync(outside, "outside", "utf8");
+    linkSync(outside, join(root, "BackPackKidzWebsite", "index.html"));
+    assert.throws(
+      () => resolveSlotPath(root, "home.hero.summary"),
+      /single-link regular file/u
+    );
+  } finally {
+    rmSync(parent, { recursive: true, force: true });
+  }
 });
 
 test("makes payment mutation and arbitrary file targeting impossible through the contract", () => {
@@ -131,8 +191,9 @@ test("verification catches a wrong result", () => {
 });
 
 test("a guarded inverse proposal restores the previous public value", () => {
-  const proposal = proposalFor();
+  const proposal = proposalFor({ base: GOVERNED_BASE });
   const beforeSource = homeSource();
+  const immutableBeforeSource = immutableHomeSource();
   const beforeValue = readSlotFromSource(beforeSource, proposal.operation.slot);
   const afterSource = applyProposalToSource(beforeSource, proposal);
   const materializedAt = CREATED_AT.toISOString();
@@ -145,10 +206,10 @@ test("a guarded inverse proposal restores the previous public value", () => {
     operation: proposal.operation,
     source: {
       repository: REPOSITORY,
-      head: BASE.head,
-      tree: BASE.tree,
+      head: proposal.base.head,
+      tree: proposal.base.tree,
       file: SLOT_DEFINITIONS[proposal.operation.slot].file,
-      fileSha256: textDigest(beforeSource),
+      fileSha256: textDigest(immutableBeforeSource),
       textSha256: textDigest(beforeValue),
     },
     result: {
@@ -173,6 +234,7 @@ test("a guarded inverse proposal restores the previous public value", () => {
   assert.throws(
     () =>
       createRollbackProposal({
+        root: ROOT,
         receipt: { ...receipt, proposalDigest: `sha256:${"0".repeat(64)}` },
         base: BASE,
         proposalId: "pub-rollback-tampered-receipt",
@@ -184,6 +246,7 @@ test("a guarded inverse proposal restores the previous public value", () => {
   assert.throws(
     () =>
       createRollbackProposal({
+        root: ROOT,
         receipt: {
           ...receipt,
           rollback: { ...receipt.rollback, restoreValue: "Attacker-selected replacement text." },
@@ -198,6 +261,7 @@ test("a guarded inverse proposal restores the previous public value", () => {
   assert.throws(
     () =>
       createRollbackProposal({
+        root: ROOT,
         receipt: {
           ...receipt,
           result: { ...receipt.result, textSha256: textDigest("Unrecorded result.") },
@@ -213,6 +277,7 @@ test("a guarded inverse proposal restores the previous public value", () => {
   assert.throws(
     () =>
       createRollbackProposal({
+        root: ROOT,
         receipt: {
           ...receipt,
           rollback: { ...receipt.rollback, extraAuthority: true },
@@ -224,7 +289,30 @@ test("a guarded inverse proposal restores the previous public value", () => {
     /unsupported field "extraAuthority"/u
   );
 
+  assert.throws(
+    () =>
+      createRollbackProposal({
+        root: ROOT,
+        receipt: {
+          ...receipt,
+          source: {
+            ...receipt.source,
+            textSha256: textDigest("Attacker-selected replacement text."),
+          },
+          rollback: {
+            ...receipt.rollback,
+            restoreValue: "Attacker-selected replacement text.",
+          },
+        },
+        base: BASE,
+        proposalId: "pub-rollback-coordinated-tamper",
+        now: new Date("2026-08-28T12:04:00.000Z"),
+      }),
+    /does not match the immutable Git source/u
+  );
+
   const rollback = createRollbackProposal({
+    root: ROOT,
     receipt,
     base: BASE,
     proposalId: "pub-rollback-home-summary",

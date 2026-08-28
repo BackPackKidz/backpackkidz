@@ -73,10 +73,10 @@ Arbitrary `*.netlify.app` hosts, hostname suffix tricks, URL userinfo, non-defau
 
 The proposal digest, candidate receipt, Git commit/tree, GitHub PR review and merge actor, CI result, and Netlify deployment result together form the audit chain. No secret belongs in any of those records.
 
-Rollback uses the same authority boundary. From the deployed revision, prepare a guarded inverse proposal:
+Rollback uses the same authority boundary. From the deployed revision, prepare a guarded inverse proposal. Rollback generation verifies the recorded source HEAD/TREE relationship, reads the allowlisted file from that immutable Git tree, and requires its file/text identities to match the receipt before trusting the restore value:
 
 ```text
 npm run publication -- rollback-preview --receipt publication/audit/pub-example-summary.json --id pub-rollback-example-summary
 ```
 
-The command fails if current content differs from the receipt. Preview and materialize that inverse proposal on a new branch, then approve and merge it through a new PR. For a whole-candidate rollback, `git revert` of the merge commit through a new PR is also bounded and auditable. Never force-push or directly edit production.
+The command fails if current content differs from the receipt or if the receipt differs from the immutable original Git source. Governed target and audit paths also reject symbolic links, junctions/reparse points, and multiply linked target files. Preview and materialize that inverse proposal on a new branch, then approve and merge it through a new PR. For a whole-candidate rollback, `git revert` of the merge commit through a new PR is also bounded and auditable. Never force-push or directly edit production.

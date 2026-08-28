@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
-import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
-import { dirname, resolve, sep } from "node:path";
+import { existsSync, lstatSync, mkdirSync, readFileSync, realpathSync, writeFileSync } from "node:fs";
+import { isAbsolute, relative, resolve, sep } from "node:path";
 
 export const CONTRACT_VERSION = 1;
 export const REPOSITORY = "BackPackKidz/backpackkidz";
@@ -19,6 +19,11 @@ export const SLOT_DEFINITIONS = Object.freeze({
     maxLength: 500,
   }),
 });
+
+const getSlotDefinition = (slot) =>
+  typeof slot === "string" && Object.hasOwn(SLOT_DEFINITIONS, slot)
+    ? SLOT_DEFINITIONS[slot]
+    : undefined;
 
 const TOP_LEVEL_KEYS = new Set([
   "schemaVersion",
@@ -200,7 +205,7 @@ export const validateProposal = (proposal) => {
     fail(`operation.type must be exactly ${ALLOWED_OPERATION}.`);
   }
 
-  const slot = SLOT_DEFINITIONS[proposal.operation.slot];
+  const slot = getSlotDefinition(proposal.operation.slot);
 
   if (!slot) {
     fail(`operation.slot is not allowlisted. Allowed slots: ${Object.keys(SLOT_DEFINITIONS).join(", ")}.`);
@@ -269,7 +274,7 @@ const encodeHtmlText = (value) =>
     .replace(/>/gu, "&gt;");
 
 const locateSlot = (source, slot) => {
-  if (!SLOT_DEFINITIONS[slot]) {
+  if (!getSlotDefinition(slot)) {
     fail(`Unknown publication slot "${slot}".`);
   }
 
@@ -354,19 +359,77 @@ export const applyProposalToSource = (source, proposal) => {
   return nextSource;
 };
 
-const resolveSlotPath = (root, slot) => {
-  const rootPath = resolve(root);
-  const filePath = resolve(rootPath, SLOT_DEFINITIONS[slot].file);
+const isPathInside = (rootPath, candidatePath) => {
+  const relativePath = relative(rootPath, candidatePath);
+  return relativePath === "" || (!isAbsolute(relativePath) && relativePath !== ".." && !relativePath.startsWith(`..${sep}`));
+};
 
-  if (filePath !== rootPath && !filePath.startsWith(`${rootPath}${sep}`)) {
+const resolveSafeRepositoryPath = (
+  root,
+  repositoryRelativePath,
+  { allowMissing = false, requireDirectory = false, requireFile = false } = {}
+) => {
+  const rootPath = resolve(root);
+  const candidatePath = resolve(rootPath, repositoryRelativePath);
+
+  if (!isPathInside(rootPath, candidatePath)) {
     fail("Resolved publication path escaped the repository root.");
   }
 
-  return filePath;
+  const relativePath = relative(rootPath, candidatePath);
+  let currentPath = rootPath;
+
+  for (const segment of relativePath.split(sep).filter(Boolean)) {
+    currentPath = resolve(currentPath, segment);
+
+    if (!existsSync(currentPath)) {
+      if (allowMissing) {
+        continue;
+      }
+
+      fail(`Required publication path does not exist: ${repositoryRelativePath}.`);
+    }
+
+    if (lstatSync(currentPath).isSymbolicLink()) {
+      fail(`Publication paths must not contain symbolic links or reparse points: ${repositoryRelativePath}.`);
+    }
+  }
+
+  if (existsSync(candidatePath)) {
+    const realRoot = realpathSync(rootPath);
+    const realCandidate = realpathSync(candidatePath);
+    const candidateStats = lstatSync(candidatePath);
+
+    if (!isPathInside(realRoot, realCandidate)) {
+      fail("Canonical publication path escaped the repository root.");
+    }
+
+    if (requireFile && (!candidateStats.isFile() || candidateStats.nlink !== 1)) {
+      fail(`Governed publication target must be a single-link regular file: ${repositoryRelativePath}.`);
+    }
+
+    if (requireDirectory && !candidateStats.isDirectory()) {
+      fail(`Governed publication directory is not a directory: ${repositoryRelativePath}.`);
+    }
+  } else if (!allowMissing) {
+    fail(`Required publication path does not exist: ${repositoryRelativePath}.`);
+  }
+
+  return candidatePath;
+};
+
+export const resolveSlotPath = (root, slot) => {
+  const definition = getSlotDefinition(slot);
+
+  if (!definition) {
+    fail(`Unknown publication slot "${slot}".`);
+  }
+
+  return resolveSafeRepositoryPath(root, definition.file, { requireFile: true });
 };
 
 export const readSlot = (root, slot) => {
-  const file = SLOT_DEFINITIONS[slot]?.file;
+  const file = getSlotDefinition(slot)?.file;
 
   if (!file) {
     fail(`Unknown publication slot "${slot}".`);
@@ -399,6 +462,44 @@ export const assertBaseIdentity = (proposal, actualBase) => {
 const gitOutput = (root, args) =>
   execFileSync("git", args, { cwd: root, encoding: "utf8" }).trim();
 
+const readImmutableGitSource = (root, { head, tree, file, slot }) => {
+  const definition = getSlotDefinition(slot);
+
+  if (!definition || definition.file !== file) {
+    fail("Recorded immutable source file does not match the allowlisted slot.");
+  }
+
+  let actualTree;
+
+  try {
+    actualTree = gitOutput(root, ["rev-parse", `${head}^{tree}`]);
+    execFileSync("git", ["merge-base", "--is-ancestor", head, "HEAD"], {
+      cwd: root,
+      stdio: "ignore",
+    });
+  } catch {
+    fail("Recorded source HEAD is unavailable or is not an ancestor of the current candidate.");
+  }
+
+  if (actualTree !== tree) {
+    fail("Recorded source HEAD does not resolve to the recorded source TREE.");
+  }
+
+  let source;
+
+  try {
+    source = execFileSync("git", ["show", `${tree}:${file}`], {
+      cwd: root,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+  } catch {
+    fail("Recorded immutable source file is unavailable from the recorded Git tree.");
+  }
+
+  return { source, value: readSlotFromSource(source, slot) };
+};
+
 export const assertMaterializationContext = (root, proposal) => {
   assertBaseIdentity(proposal, getGitIdentity(root));
   const branch = gitOutput(root, ["branch", "--show-current"]);
@@ -427,7 +528,7 @@ export const previewProposal = (root, proposal) => {
     "status",
     "--porcelain",
     "--",
-    SLOT_DEFINITIONS[proposal.operation.slot].file,
+    getSlotDefinition(proposal.operation.slot).file,
   ]);
 
   if (slotStatus) {
@@ -492,12 +593,34 @@ export const materializeProposal = (root, proposal, now = new Date()) => {
   const beforeSource = readFileSync(filePath, "utf8");
   const afterSource = applyProposalToSource(beforeSource, proposal);
   const verification = verifyProposalInSource(afterSource, proposal);
+  const immutableSource = readImmutableGitSource(root, {
+    ...proposal.base,
+    file: preview.file,
+    slot: proposal.operation.slot,
+  });
+
+  if (immutableSource.value !== preview.before) {
+    fail("Clean worktree content does not match the proposal's immutable Git source.");
+  }
+
   const materializedAt = now.toISOString();
-  const receiptPath = resolve(root, "publication", "audit", `${proposal.proposalId}.json`);
+  const auditDirectory = resolveSafeRepositoryPath(root, "publication/audit", {
+    allowMissing: true,
+    requireDirectory: true,
+  });
+  const receiptPath = resolveSafeRepositoryPath(
+    root,
+    `publication/audit/${proposal.proposalId}.json`,
+    { allowMissing: true }
+  );
 
   if (existsSync(receiptPath)) {
     fail(`Audit receipt already exists for proposal ${proposal.proposalId}; proposal identities are immutable.`);
   }
+
+  mkdirSync(auditDirectory, { recursive: true });
+  resolveSafeRepositoryPath(root, "publication/audit", { requireDirectory: true });
+  resolveSafeRepositoryPath(root, `publication/audit/${proposal.proposalId}.json`, { allowMissing: true });
 
   const receipt = {
     schemaVersion: CONTRACT_VERSION,
@@ -511,8 +634,8 @@ export const materializeProposal = (root, proposal, now = new Date()) => {
       head: proposal.base.head,
       tree: proposal.base.tree,
       file: preview.file,
-      fileSha256: textDigest(beforeSource),
-      textSha256: textDigest(preview.before),
+      fileSha256: textDigest(immutableSource.source),
+      textSha256: textDigest(immutableSource.value),
     },
     result: {
       file: preview.file,
@@ -536,8 +659,7 @@ export const materializeProposal = (root, proposal, now = new Date()) => {
     materializedAt,
   };
   writeFileSync(filePath, afterSource, "utf8");
-  mkdirSync(dirname(receiptPath), { recursive: true });
-  writeFileSync(receiptPath, `${JSON.stringify(receipt, null, 2)}\n`, "utf8");
+  writeFileSync(receiptPath, `${JSON.stringify(receipt, null, 2)}\n`, { encoding: "utf8", flag: "wx" });
 
   return { branch: context.branch, preview, receipt, receiptPath };
 };
@@ -588,7 +710,7 @@ export const validateReceipt = (receipt) => {
     assertTextDigest(digest, label);
   }
 
-  if (receipt.result?.file !== SLOT_DEFINITIONS[receipt.operation.slot].file || receipt.source?.file !== receipt.result.file) {
+  if (receipt.result?.file !== getSlotDefinition(receipt.operation.slot).file || receipt.source?.file !== receipt.result.file) {
     fail("Receipt file does not match the allowlisted slot path.");
   }
 
@@ -630,8 +752,27 @@ export const validateReceipt = (receipt) => {
   return receipt;
 };
 
-export const createRollbackProposal = ({ receipt, base, proposalId, now = new Date() }) => {
+export const createRollbackProposal = ({ root, receipt, base, proposalId, now = new Date() }) => {
   validateReceipt(receipt);
+
+  if (typeof root !== "string") {
+    fail("Rollback requires a repository root for immutable source verification.");
+  }
+
+  const immutableSource = readImmutableGitSource(root, {
+    head: receipt.source.head,
+    tree: receipt.source.tree,
+    file: receipt.source.file,
+    slot: receipt.operation.slot,
+  });
+
+  if (
+    textDigest(immutableSource.source) !== receipt.source.fileSha256 ||
+    textDigest(immutableSource.value) !== receipt.source.textSha256 ||
+    immutableSource.value !== receipt.rollback.restoreValue
+  ) {
+    fail("Receipt rollback value does not match the immutable Git source.");
+  }
 
   if (receipt.rollback.expectedCurrentTextSha256 !== receipt.result.textSha256) {
     fail("Receipt rollback guard does not match the recorded result.");
@@ -690,7 +831,7 @@ export const assertAllowedCommand = (command) => {
 export const loadJson = (path) => JSON.parse(readFileSync(path, "utf8"));
 
 export const publicUrlForSlot = (baseUrl, slot) => {
-  const definition = SLOT_DEFINITIONS[slot];
+  const definition = getSlotDefinition(slot);
 
   if (!definition) {
     fail(`Unknown publication slot "${slot}".`);
