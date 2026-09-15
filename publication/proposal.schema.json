@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/BackPackKidz/backpackkidz/publication/proposal.schema.json",
+  "$id": "https://github.com/matthewart100-sys/backpackkidz/publication/proposal.schema.json",
   "title": "Back Pack Kidz governed public-text proposal",
   "type": "object",
   "additionalProperties": false,
@@ -18,7 +18,7 @@
       "type": "string",
       "pattern": "^pub-[a-z0-9][a-z0-9-]{5,63}$"
     },
-    "repository": { "const": "BackPackKidz/backpackkidz" },
+    "repository": { "const": "matthewart100-sys/backpackkidz" },
     "base": {
       "type": "object",
       "additionalProperties": false,

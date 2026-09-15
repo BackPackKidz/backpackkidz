@@ -7,7 +7,7 @@ import { canonicalJson, resolveSafeRepositoryPath } from "./publication-shared.m
 export { canonicalJson, resolveSafeRepositoryPath } from "./publication-shared.mjs";
 
 export const CONTRACT_VERSION = 1;
-export const REPOSITORY = "BackPackKidz/backpackkidz";
+export const REPOSITORY = "matthewart100-sys/backpackkidz";
 export const ALLOWED_OPERATION = "set_public_text";
 
 export const SLOT_DEFINITIONS = Object.freeze({
@@ -444,7 +444,7 @@ export const assertMaterializationContext = (root, proposal) => {
 
   const remote = gitOutput(root, ["remote", "get-url", "origin"]);
 
-  if (!/^(?:https:\/\/github\.com\/|git@github\.com:|ssh:\/\/git@github\.com\/)?BackPackKidz\/backpackkidz(?:\.git)?$/iu.test(remote)) {
+  if (!/^(?:https:\/\/github\.com\/|git@github\.com:|ssh:\/\/git@github\.com\/)?matthewart100-sys\/backpackkidz(?:\.git)?$/iu.test(remote)) {
     fail(`origin does not identify ${REPOSITORY}.`);
   }
 
