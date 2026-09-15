@@ -14,7 +14,7 @@ const sourceRoot = resolve(import.meta.dirname, "..");
 // fabricated green pixels, no authentic partner art or email-derived bytes.
 const PNG = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAIAAAABCAYAAAD0In+KAAAAFElEQVR4AQEJAPb/ABR4Mv8ooFD/DjcD1SSES2cAAAAASUVORK5CYII=", "base64");
 const purpose = "partner_logo_execution_grant_v1";
-const audience = "BackPackKidz/backpackkidz/set_partner_logo";
+const audience = "matthewart100-sys/backpackkidz/set_partner_logo";
 const registry = readFileSync(join(sourceRoot, REGISTRY_PATH), "utf8");
 const todo = readFileSync(join(sourceRoot, TODO_PATH), "utf8");
 const item = (partner_id = "nicolas", classification = "synthetic_public_safe") => ({ partner_id, proposal_sha256: "a".repeat(64), decision_sha256: "b".repeat(64), candidate_ref: "synthetic-candidate-" + partner_id, custody_sha256: "c".repeat(64), classification, asset_sha256: sha(PNG), width: 2, height: 1, metadata: { alt: "Synthetic fixture pixels", layout: "" } });
@@ -45,14 +45,14 @@ function fixture(t, classification = "synthetic_public_safe", partnerIds = ["nic
   git(root, "config", "user.name", "Synthetic fixture");
   git(root, "config", "user.email", "fixture@example.invalid");
   git(root, "config", "core.autocrlf", "false");
-  git(root, "remote", "add", "origin", "https://github.com/BackPackKidz/backpackkidz.git");
+  git(root, "remote", "add", "origin", "https://github.com/matthewart100-sys/backpackkidz.git");
   git(root, "add", ".");
   git(root, "commit", "-m", "Synthetic isolated base");
   const base = { head: git(root, "rev-parse", "HEAD"), tree: git(root, "rev-parse", "HEAD^{tree}") };
   const items = partnerIds.map(id => item(id, classification));
   const files = planLogoFiles({ registry, todo, items, assets: new Map(items.map(i => [i.partner_id, PNG])) });
   const manifest = contentManifest(files);
-  const payload = { purpose, audience, organization_id: "back-pack-kidz", workspace_id: "production", phase: "reserved", execution_id: "synthetic-execution-0001", run_id: "synthetic-run-0001", repository: "BackPackKidz/backpackkidz", base, items, bundle_sha256: "d".repeat(64), bundle_decision_sha256: "e".repeat(64), manifest, issued_at: now, expires_at: now + 300 };
+  const payload = { purpose, audience, organization_id: "back-pack-kidz", workspace_id: "production", phase: "reserved", execution_id: "synthetic-execution-0001", run_id: "synthetic-run-0001", repository: "matthewart100-sys/backpackkidz", base, items, bundle_sha256: "d".repeat(64), bundle_decision_sha256: "e".repeat(64), manifest, issued_at: now, expires_at: now + 300 };
   const grant = envelope(payload, privateKey);
   const acknowledgement = envelope({ purpose, audience, organization_id: "back-pack-kidz", workspace_id: "production", phase: "materialized", execution_id: payload.execution_id, grant_sha256: sha(Buffer.from(canonicalJson(grant))), manifest_sha256: sha(Buffer.from(canonicalJson(manifest))), materialized_at: now, issued_at: now, expires_at: now + 300 }, privateKey);
   const receipt = { schema: "partner_logo_receipt_v1", grant, materialization: acknowledgement };

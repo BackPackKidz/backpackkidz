@@ -98,7 +98,7 @@ const main = async () => {
   switch (command) {
     case "read": {
       requireExactOptions(options, ["slot"]);
-      printJson({ repository: "BackPackKidz/backpackkidz", base: getGitIdentity(root), ...readSlot(root, options.slot) });
+      printJson({ repository: "matthewart100-sys/backpackkidz", base: getGitIdentity(root), ...readSlot(root, options.slot) });
       break;
     }
     case "propose": {

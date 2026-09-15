@@ -40,7 +40,7 @@ function assets(input, items) {
 function context(base, bundle, clean) {
   require(canonicalJson(getGitIdentity(root)) === canonicalJson(base), "logo_base_stale");
   require(git(["branch", "--show-current"]) === `pilot/partner-logos-${bundle}`, "logo_branch_invalid");
-  require(/^(?:https:\/\/github\.com\/|git@github\.com:)BackPackKidz\/backpackkidz(?:\.git)?$/u.test(git(["remote", "get-url", "origin"])), "logo_repository_invalid");
+  require(/^(?:https:\/\/github\.com\/|git@github\.com:)matthewart100-sys\/backpackkidz(?:\.git)?$/u.test(git(["remote", "get-url", "origin"])), "logo_repository_invalid");
   if (clean) require(!git(["status", "--porcelain"]), "logo_worktree_dirty");
 }
 

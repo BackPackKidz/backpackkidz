@@ -13,7 +13,7 @@ export const PARTNERS = Object.freeze({
   "studio-seven": Object.freeze({ name: "Studio Seven PG", href: "https://studiosevenpg.com/", asset: "BackPackKidzWebsite/assets/partner-studio-seven-canonical.png" }),
 });
 const PURPOSE = "partner_logo_execution_grant_v1";
-const AUDIENCE = "BackPackKidz/backpackkidz/set_partner_logo";
+const AUDIENCE = "matthewart100-sys/backpackkidz/set_partner_logo";
 const fail = (code) => { throw new Error(code); };
 const require = (condition, code) => { if (!condition) fail(code); };
 export const sha = (bytes) => createHash("sha256").update(bytes).digest("hex");
@@ -223,7 +223,7 @@ function verifyEnvelope(envelope, keys, at, historical = false) {
 export function validateGrant(grant, keys, at, historical = false) {
   const value = verifyEnvelope(grant, keys, at, historical);
   exact(value, ["purpose", "audience", "organization_id", "workspace_id", "phase", "execution_id", "run_id", "repository", "base", "items", "bundle_sha256", "bundle_decision_sha256", "manifest", "issued_at", "expires_at"], "logo_grant");
-  require(value.phase === "reserved" && token(value.execution_id) && token(value.run_id) && value.repository === "BackPackKidz/backpackkidz", "logo_grant_identity_invalid");
+  require(value.phase === "reserved" && token(value.execution_id) && token(value.run_id) && value.repository === "matthewart100-sys/backpackkidz", "logo_grant_identity_invalid");
   exact(value.base, ["head", "tree"], "logo_base");
   require(gitId(value.base.head) && gitId(value.base.tree) && hash(value.bundle_sha256) && hash(value.bundle_decision_sha256), "logo_grant_binding_invalid");
   require(Array.isArray(value.items) && value.items.length >= 1 && value.items.length <= 2 && new Set(value.items.map(i => i.partner_id)).size === value.items.length, "logo_items_invalid");
