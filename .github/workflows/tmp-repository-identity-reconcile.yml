@@ -1,0 +1,71 @@
+name: Temporary repository identity reconciliation
+on:
+  push:
+    branches:
+      - fix/repository-identity-transfer
+permissions:
+  contents: write
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/repository-identity-transfer
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.23.2
+          cache: npm
+      - name: Verify repository identity and apply bounded replacements
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import json, pathlib, urllib.request
+          old = 'BackPackKidz/backpackkidz'
+          new = 'matthewart100-sys/backpackkidz'
+          expected = {
+              'scripts/partner-logo-contract.mjs': 2,
+              'scripts/partner-logo.mjs': 1,
+              'publication/partner-logo-main-protection-proposal.json': 1,
+              'tests/partner-logo-contract.test.mjs': 3,
+          }
+          request = urllib.request.Request('https://api.github.com/repos/' + new, headers={'Authorization': 'Bearer ' + __import__('os').environ['GH_TOKEN'], 'Accept': 'application/vnd.github+json'})
+          with urllib.request.urlopen(request, timeout=20) as response:
+              repo = json.load(response)
+          assert repo['id'] == 1264408024, repo['id']
+          assert repo['full_name'] == new, repo['full_name']
+          for name, count in expected.items():
+              path = pathlib.Path(name)
+              text = path.read_text(encoding='utf-8')
+              actual = text.count(old)
+              assert actual == count, (name, actual, count)
+              path.write_text(text.replace(old, new), encoding='utf-8', newline='\n')
+          proposal = json.loads(pathlib.Path('publication/partner-logo-main-protection-proposal.json').read_text())
+          assert proposal['repository'] == new
+          assert proposal['applied'] is False and proposal['authorization_required'] is True
+          PY
+          if git grep -n -F 'BackPackKidz/backpackkidz' -- scripts publication tests; then
+            echo 'stale governed repository identity remains' >&2
+            exit 1
+          fi
+          test "$(git diff --name-only | sort)" = "$(printf '%s\n' publication/partner-logo-main-protection-proposal.json scripts/partner-logo-contract.mjs scripts/partner-logo.mjs tests/partner-logo-contract.test.mjs | sort)"
+          git diff --check
+      - name: Install and validate
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+          npm run check
+          node --test tests/partner-logo-contract.test.mjs tests/partner-logo-browser.test.mjs
+          npm audit
+      - name: Commit only the bounded correction
+        run: |
+          git rm .github/workflows/tmp-repository-identity-reconcile.yml
+          git config user.name 'BONSaAI bounded reconciliation'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add publication/partner-logo-main-protection-proposal.json scripts/partner-logo-contract.mjs scripts/partner-logo.mjs tests/partner-logo-contract.test.mjs
+          test "$(git diff --cached --name-only | sort)" = "$(printf '%s\n' .github/workflows/tmp-repository-identity-reconcile.yml publication/partner-logo-main-protection-proposal.json scripts/partner-logo-contract.mjs scripts/partner-logo.mjs tests/partner-logo-contract.test.mjs | sort)"
+          git commit -m 'fix: bind partner-logo pilot to transferred repository identity'
+          git push origin HEAD:fix/repository-identity-transfer
