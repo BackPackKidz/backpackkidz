@@ -1,0 +1,19 @@
+{
+  "schema": "partner_logo_main_protection_change_v1",
+  "repository": "BackPackKidz/backpackkidz",
+  "ruleset_id": 22473400,
+  "name": "governed-publication-main",
+  "target": "branch",
+  "enforcement": "active",
+  "conditions": {"ref_name": {"exclude": [], "include": ["refs/heads/main"]}},
+  "expected_current_user_can_bypass": "never",
+  "expected_rules": [
+    {"type": "deletion"},
+    {"type": "non_fast_forward"},
+    {"type": "pull_request", "parameters": {"required_approving_review_count": 1, "dismiss_stale_reviews_on_push": true, "required_reviewers": [], "require_code_owner_review": false, "require_last_push_approval": false, "required_review_thread_resolution": false, "require_extra_approval_for_unattributed_changes": false, "allowed_merge_methods": ["merge", "squash", "rebase"]}},
+    {"type": "required_status_checks", "parameters": {"strict_required_status_checks_policy": false, "do_not_enforce_on_create": false, "required_status_checks": [{"context": "governed-publication-check / governed-publication-check"}]}}
+  ],
+  "change": {"rule_type": "required_status_checks", "parameter": "strict_required_status_checks_policy", "from": false, "to": true},
+  "applied": false,
+  "authorization_required": true
+}

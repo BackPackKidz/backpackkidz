@@ -4,6 +4,8 @@ on:
   pull_request:
     branches:
       - main
+      # Validate the source-only implementation stacked on the preserved PR #7.
+      - bonsai/governed-publication-lane
 
 permissions:
   contents: read
@@ -29,8 +31,31 @@ jobs:
       - name: Install locked dependencies
         run: npm ci
 
+      - name: Install the pinned browser for deterministic source QA
+        run: npx playwright install --with-deps chromium
+
       - name: Verify build, tests, links, accessibility, responsive baseline, and security boundaries
         run: npm run check
 
       - name: Verify exact governed candidate diff and receipt
         run: npm run publication -- candidate-check --base "${{ github.event.pull_request.base.sha }}" --head "${{ github.event.pull_request.head.sha }}"
+
+  partner-logo-preview-validation:
+    name: partner-logo-preview-validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Verify complete candidate with synthetic preview permitted
+        env:
+          PILOT_BASE: ${{ github.event.pull_request.base.sha }}
+          PILOT_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: node scripts/partner-logo-preview-check.mjs

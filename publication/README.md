@@ -4,7 +4,7 @@ This directory defines the website side of the BONSaAI publication boundary. It 
 
 ## Boundary
 
-The only supported operation is `set_public_text`, and its target is an enum rather than a file path. The initial allowlist contains two public, non-payment text slots:
+The foundation operation is `set_public_text`, whose target is an enum rather than a file path. Its allowlist contains two public, non-payment text slots:
 
 - `home.hero.summary`
 - `events.featured.summary`
@@ -24,7 +24,9 @@ Production authority remains GitHub authentication plus repository rules, follow
 5. Do not grant the Jebediah/BONSaAI automation identity ruleset bypass or direct `main` push permission. Give it only the minimum repository metadata/content and pull-request permissions needed to create a candidate branch and Draft PR.
 6. Keep Netlify production deployment restricted to `main`; deploy previews may be used for review.
 
-At the time this lane was authored, GitHub reported no branch protection or repository rulesets on `main`. That owner-side control is therefore a required activation step, not an assumption made by this code.
+Read-only verification on 2026-09-14 found active main ruleset 22473400 with the listed review/check/no-bypass controls, but `strict_required_status_checks_policy=false`. The partner-logo source proposal changes only that value to true; no provider setting has been applied. The required context is `governed-publication-check / governed-publication-check`; this source candidate explicitly names the job to match it. PR #7 previously emitted the shorter `governed-publication-check` name. Fresh provider verification remains mandatory before release.
+
+The bounded partner-logo extension is described in [PARTNER_LOGO.md](PARTNER_LOGO.md). It addresses exactly two existing partner records and has a separate receipt verifier. The text operation and its existing negative checks remain supported.
 
 ## Workflow
 
