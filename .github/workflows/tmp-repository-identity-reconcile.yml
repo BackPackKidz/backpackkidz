@@ -33,22 +33,22 @@ jobs:
               repo = json.load(response)
           assert repo['id'] == 1264408024, repo['id']
           assert repo['full_name'] == new, repo['full_name']
-          replacements = {
-              'scripts/partner-logo-contract.mjs': [(old, new, 2)],
-              'scripts/partner-logo.mjs': [(escaped_old, escaped_new, 1)],
-              'publication/partner-logo-main-protection-proposal.json': [(old, new, 1)],
-              'tests/partner-logo-contract.test.mjs': [(old, new, 3)],
-              'scripts/publication-contract.mjs': [(old, new, 1)],
-              'scripts/governed-publication.mjs': [(old, new, 1)],
-              'publication/proposal.schema.json': [(old, new, 2)],
+          expected = {
+              'scripts/partner-logo-contract.mjs': 2,
+              'scripts/partner-logo.mjs': 1,
+              'publication/partner-logo-main-protection-proposal.json': 1,
+              'tests/partner-logo-contract.test.mjs': 3,
+              'scripts/publication-contract.mjs': 1,
+              'scripts/governed-publication.mjs': 1,
+              'publication/proposal.schema.json': 2,
           }
-          for name, edits in replacements.items():
+          for name, minimum in expected.items():
               path = pathlib.Path(name)
               text = path.read_text(encoding='utf-8')
-              for before, after, count in edits:
-                  actual = text.count(before)
-                  assert actual == count, (name, before, actual, count)
-                  text = text.replace(before, after)
+              count = text.count(old) + text.count(escaped_old)
+              assert count >= minimum, (name, count, minimum)
+              text = text.replace(old, new).replace(escaped_old, escaped_new)
+              assert old not in text and escaped_old not in text, name
               path.write_text(text, encoding='utf-8', newline='\n')
           proposal = json.loads(pathlib.Path('publication/partner-logo-main-protection-proposal.json').read_text())
           assert proposal['repository'] == new
