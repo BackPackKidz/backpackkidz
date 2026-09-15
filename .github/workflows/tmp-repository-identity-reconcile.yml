@@ -8,7 +8,7 @@ permissions:
 jobs:
   reconcile:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
         with:
@@ -38,6 +38,9 @@ jobs:
               'scripts/partner-logo.mjs': [(escaped_old, escaped_new, 1)],
               'publication/partner-logo-main-protection-proposal.json': [(old, new, 1)],
               'tests/partner-logo-contract.test.mjs': [(old, new, 3)],
+              'scripts/publication-contract.mjs': [(old, new, 1)],
+              'scripts/governed-publication.mjs': [(old, new, 1)],
+              'publication/proposal.schema.json': [(old, new, 2)],
           }
           for name, edits in replacements.items():
               path = pathlib.Path(name)
@@ -64,7 +67,15 @@ jobs:
                       leftovers.append(str(path))
           assert not leftovers, leftovers
           PY
-          test "$(git diff --name-only | sort)" = "$(printf '%s\n' publication/partner-logo-main-protection-proposal.json scripts/partner-logo-contract.mjs scripts/partner-logo.mjs tests/partner-logo-contract.test.mjs | sort)"
+          expected_files=$(printf '%s\n' \
+            publication/partner-logo-main-protection-proposal.json \
+            publication/proposal.schema.json \
+            scripts/governed-publication.mjs \
+            scripts/partner-logo-contract.mjs \
+            scripts/partner-logo.mjs \
+            scripts/publication-contract.mjs \
+            tests/partner-logo-contract.test.mjs | sort)
+          test "$(git diff --name-only | sort)" = "$expected_files"
           git diff --check
       - name: Install and validate
         run: |
@@ -78,7 +89,16 @@ jobs:
           git rm .github/workflows/tmp-repository-identity-reconcile.yml
           git config user.name 'BONSaAI bounded reconciliation'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add publication/partner-logo-main-protection-proposal.json scripts/partner-logo-contract.mjs scripts/partner-logo.mjs tests/partner-logo-contract.test.mjs
-          test "$(git diff --cached --name-only | sort)" = "$(printf '%s\n' .github/workflows/tmp-repository-identity-reconcile.yml publication/partner-logo-main-protection-proposal.json scripts/partner-logo-contract.mjs scripts/partner-logo.mjs tests/partner-logo-contract.test.mjs | sort)"
+          git add publication/partner-logo-main-protection-proposal.json publication/proposal.schema.json scripts/governed-publication.mjs scripts/partner-logo-contract.mjs scripts/partner-logo.mjs scripts/publication-contract.mjs tests/partner-logo-contract.test.mjs
+          expected_files=$(printf '%s\n' \
+            .github/workflows/tmp-repository-identity-reconcile.yml \
+            publication/partner-logo-main-protection-proposal.json \
+            publication/proposal.schema.json \
+            scripts/governed-publication.mjs \
+            scripts/partner-logo-contract.mjs \
+            scripts/partner-logo.mjs \
+            scripts/publication-contract.mjs \
+            tests/partner-logo-contract.test.mjs | sort)
+          test "$(git diff --cached --name-only | sort)" = "$expected_files"
           git commit -m 'fix: bind partner-logo pilot to transferred repository identity'
           git push origin HEAD:fix/repository-identity-transfer
