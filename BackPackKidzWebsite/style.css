@@ -1012,6 +1012,19 @@ h3 {
   transform: scaleX(1);
 }
 
+/* Keep the partners page's small text readable on its warm panels. */
+.partners-page .partners-note-panel > p,
+.partners-page .support-panel > p {
+  color: #5f6f86;
+}
+
+.partners-page .recognition-card > span,
+.partners-page .partner-impact-card > .feature-icon,
+.partners-page .eyebrow,
+.partners-page .nav-menu a[aria-current="page"] {
+  color: #c2410c;
+}
+
 .partners-hero-section {
   position: relative;
   overflow: hidden;
