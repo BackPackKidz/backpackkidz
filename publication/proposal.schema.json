@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/BackPackKidz/backpackkidz/publication/proposal.schema.json",
+  "title": "Back Pack Kidz governed public-text proposal",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "proposalId",
+    "repository",
+    "base",
+    "operation",
+    "createdAt"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "proposalId": {
+      "type": "string",
+      "pattern": "^pub-[a-z0-9][a-z0-9-]{5,63}$"
+    },
+    "repository": { "const": "BackPackKidz/backpackkidz" },
+    "base": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["head", "tree"],
+      "properties": {
+        "head": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+        "tree": { "type": "string", "pattern": "^[a-f0-9]{40}$" }
+      }
+    },
+    "operation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "slot", "value"],
+      "properties": {
+        "type": { "const": "set_public_text" },
+        "slot": {
+          "enum": ["home.hero.summary", "events.featured.summary"]
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        }
+      }
+    },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "rationale": { "type": "string", "maxLength": 500 }
+  }
+}

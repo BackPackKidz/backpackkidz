@@ -6,7 +6,13 @@
   "scripts": {
     "build": "node -e \"console.log('Static site build complete')\"",
     "dev": "netlify dev",
-    "test": "node --test"
+    "test": "node --test",
+    "check": "npm run build && npm test && npm run check:links && npm run check:accessibility && npm run check:responsive && npm run check:security",
+    "check:links": "node scripts/static-checks.mjs links",
+    "check:accessibility": "node scripts/static-checks.mjs accessibility",
+    "check:responsive": "node scripts/static-checks.mjs responsive",
+    "check:security": "node scripts/static-checks.mjs security",
+    "publication": "node scripts/governed-publication.mjs"
   },
   "dependencies": {
     "@netlify/blobs": "^10.0.2",
