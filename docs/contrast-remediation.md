@@ -11,7 +11,8 @@ Baseline tree: `d6dbd54671f016a83c8be46cd121d675d1c16dda`.
 The audit serves that commit's tracked website files directly with `git show`;
 it does not derive the baseline from PR #9 or run a production site.
 
-The 16 authorized Axe contrast targets are:
+The 17 authorized Axe contrast targets (the original 16 plus the separately
+authorized current-page navigation target) are:
 
 | Targets | Count | Baseline foreground/background | Baseline ratio |
 | --- | ---: | --- | ---: |
@@ -20,8 +21,11 @@ The 16 authorized Axe contrast targets are:
 | `.partner-impact-card > .feature-icon` (01–06) | 6 | `#ea580c` / `#fff7ed` | 3.35 |
 | `.eyebrow` | 1 | `#ea580c` / composited `#fef0e5` | 3.18 |
 | `.support-panel > p` and its donation/sponsor links | 3 | `#64748b` / `#fff7ed` | 4.48 |
+| `.nav-menu a[aria-current="page"]` | 1 | `#ea580c` / `#ffffff` (desktop) | 3.55 |
 
-Warm-panel prose becomes `#5f6f86`; orange small text becomes `#c2410c`.
+Warm-panel prose becomes `#5f6f86`; orange small text and the partners page's
+current-page navigation link become `#c2410c`. Navigation structure, link,
+underline, dimensions and responsive behavior are unchanged.
 The measured minimum across corrected targets/states is 4.6308:1, above 4.5:1.
 
 ## Validation
@@ -45,15 +49,19 @@ manifest or lockfile.
 
 Verified with Chromium 153.0.8010.12 and Axe 4.13.0 at 360, 768 and 1440 pixels:
 
-- All 16 authorized targets pass in default state, all eleven card hover
-  states, and hover/focus-visible/active states of both affected links:
-  18 states per width, 54 candidate states in total.
+- All authorized targets pass in default state, all eleven card hover states,
+  and hover/focus-visible/active states of both affected support links. The
+  current-page navigation link also passes default/hover/focus-visible/active
+  states, including expanded mobile/tablet menus: 22 states per width,
+  66 candidate states in total.
 - Corrected elements have no applicable disabled state (static text/anchors).
 - Full-document WCAG 2 A/AA and WCAG 2.1 A/AA scans introduce no new serious
   or critical violations, compared with the same baseline interaction states.
 - Every element's geometry, attributes and leaf text match the baseline.
 - Zero changed pixels fall outside the corrected text rectangles at each
-  width; full-page and section screenshots were visually inspected.
+  width, including all four navigation states. Viewport rectangles are
+  compared after keyboard scrolling/menu expansion, and must match baseline
+  exactly. Full-page, section and navigation screenshots were inspected.
 - No horizontal overflow. Existing website suite: 19/19 passed; build passed.
 - Audit-tool dependency audit: zero vulnerabilities. Production dependency
   audit still reports the separate Nodemailer baseline issue; this CSS
@@ -65,11 +73,12 @@ Forms are not submitted, no SMTP is used, and no production page is tested.
 
 ## Explicit residual baseline findings
 
-Full-page contrast counts are **16 → 0** at 360/768 and **17 → 1** at 1440.
-The extra desktop target is `.nav-menu a[aria-current="page"]` (3.55:1 on
-white). It was outside the original 16-target authorization and is left
-unchanged pending a separate scope decision. The earlier pilot scan scrolled
-to the partner grid and did not report this header target.
+Full-page contrast counts are **16 → 0** at 360/768 with the menu closed and
+**17 → 0** at 1440. Opening the mobile/tablet menu reveals the same seventeenth
+target; it passes every tested state after correction. All full-document
+contrast checks in the matrix now have zero violations. The earlier pilot
+scan scrolled to the partner grid and did not report the desktop header
+target; it was corrected only after explicit scope-extension authorization.
 
 Canonical main also has two existing critical `image-alt` violations on the
 header/footer brand images. Both remain unchanged in this delta; preserved
@@ -80,4 +89,6 @@ other elements; this is not a claim that all website accessibility passes.
 PR #7, PR #9 and Jebediah PR #261 remain untouched. This candidate is not
 merged and is not authorization for production publication. Reconciliation
 and the full combined acceptance matrix remain gated on the separate
-Nodemailer runtime verification/remediation and any additional scope decision.
+Nodemailer runtime verification/remediation. Automatic non-production Netlify
+Deploy Previews are now authorized validation artifacts; this grants no
+production publication authority.

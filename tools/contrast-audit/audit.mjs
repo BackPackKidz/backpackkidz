@@ -14,7 +14,7 @@ const root = resolve(process.env.BPK_AUDIT_ROOT || resolve(import.meta.dirname, 
 const output = resolve(process.env.BPK_AUDIT_OUTPUT || resolve(tmpdir(), 'backpackkidz-contrast-audit'));
 const baseline = '8029a0a6b1708f74f95223e237459f8de48ad009';
 const sha = bytes => createHash('sha256').update(bytes).digest('hex');
-const corrected = '.partners-note-panel > p, .recognition-card > span, .partner-impact-card > .feature-icon, .eyebrow, .support-panel > p, .support-panel > p > a';
+const corrected = '.partners-note-panel > p, .recognition-card > span, .partner-impact-card > .feature-icon, .eyebrow, .support-panel > p, .support-panel > p > a, .nav-menu a[aria-current="page"]';
 const git = (...args) => execFileSync('git', ['-C', root, ...args]);
 const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.svg': 'image/svg+xml', '.webp': 'image/webp', '.ico': 'image/x-icon' };
 mkdirSync(output, { recursive: true });
@@ -47,7 +47,7 @@ const audit = page => page.evaluate(async () => {
 const targetContrast = page => page.locator(corrected).evaluateAll(elements => {
   const channels = value => value.match(/[\d.]+/g).map(Number);
   const luminance = color => color.slice(0, 3).map(v => v / 255).map(v => v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4).reduce((sum, v, i) => sum + v * [0.2126, 0.7152, 0.0722][i], 0);
-  return elements.map(el => {
+  return elements.filter(el => el.getClientRects().length).map(el => {
     const style = getComputedStyle(el), layers = [];
     for (let parent = el; parent; parent = parent.parentElement) {
       const layer = getComputedStyle(parent);
@@ -61,6 +61,19 @@ const targetContrast = page => page.locator(corrected).evaluateAll(elements => {
   });
 });
 const severe = result => result.violations.filter(v => ['serious', 'critical'].includes(v.impact)).flatMap(v => v.nodes.map(n => v.id + ':' + n.target.join('|')));
+function compareImages(before, after, rectangles) {
+  const old = PNG.sync.read(before), current = PNG.sync.read(after);
+  assert.equal(current.width, old.width); assert.equal(current.height, old.height);
+  let changedPixels = 0, outsideTargets = 0;
+  for (let y = 0; y < old.height; y++) for (let x = 0; x < old.width; x++) {
+    const p = (y * old.width + x) * 4;
+    if (old.data.subarray(p, p + 4).equals(current.data.subarray(p, p + 4))) continue;
+    changedPixels++;
+    if (!rectangles.some(r => x >= Math.floor(r.x) - 1 && x <= Math.ceil(r.x + r.width) + 1 && y >= Math.floor(r.y) - 1 && y <= Math.ceil(r.y + r.height) + 1)) outsideTargets++;
+  }
+  assert.equal(outsideTargets, 0, 'Pixel changes must be confined to the corrected text rectangles');
+  return { changedPixels, outsideTargets };
+}
 try {
   const context = await browser.newContext({ reducedMotion: 'reduce', serviceWorkers: 'block', acceptDownloads: false });
   await context.route('**/*', route => {
@@ -116,34 +129,54 @@ try {
           await link.evaluate(el => el.blur());
         }
       }
+      await page.evaluate(() => scrollTo(0, 0));
+      if (width < 1101) await page.locator('.nav-toggle').click();
+      const currentLink = page.locator('.nav-menu a[aria-current="page"]');
+      const navScreenshots = new Map();
+      for (const state of ['default', 'hover', 'focus', 'active']) {
+        if (state === 'default') await page.mouse.move(0, 0); else await currentLink.hover();
+        if (state === 'focus') { await page.keyboard.press('Tab'); await currentLink.focus(); }
+        if (state === 'active') await page.mouse.down();
+        if (state !== 'default') assert(await currentLink.evaluate((el, state) => el.matches(':' + (state === 'focus' ? 'focus-visible' : state)), state));
+        const contrast = await targetContrast(page);
+        const navRect = await currentLink.boundingBox();
+        const stateRectangles = await page.locator(corrected).evaluateAll(elements => elements.map(el => {
+          const r = el.getBoundingClientRect(); return { x: r.x, y: r.y, width: r.width, height: r.height };
+        }));
+        const bytes = await page.screenshot({ animations: 'disabled' });
+        writeFileSync(resolve(output, `${mode}-${width}-nav-${state}.png`), bytes);
+        navScreenshots.set(state, { bytes, rect: navRect, rectangles: stateRectangles });
+        states.push({ state: `nav-${state}`, contrast, ...await audit(page) });
+        if (state === 'active') { await page.mouse.move(0, 0); await page.mouse.up(); }
+        await currentLink.evaluate(el => el.blur());
+      }
+      if (width < 1101) await page.locator('.nav-toggle').click();
       // Corrected elements are static text or anchors: none has a disabled state.
       assert.equal(await page.locator(corrected).evaluateAll(elements => elements.some(el => 'disabled' in el)), false);
       const item = { mode, width, ...result, targetStyles, states, screenshot_sha256: sha(screenshot), geometry_sha256: sha(JSON.stringify(geometry)), horizontal_overflow: await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1) };
       assert.equal(item.horizontal_overflow, false);
-      if (mode === 'baseline') snapshots.set(width, { item, geometry, screenshot });
+      if (mode === 'baseline') snapshots.set(width, { item, geometry, screenshot, navScreenshots });
       else {
         const before = snapshots.get(width);
         assert.deepEqual(geometry, before.geometry, 'Content, attributes and every element rectangle must be unchanged');
         for (const state of states) {
-          assert.equal(state.contrast.length, 16);
+          assert.equal(state.contrast.length, width === 1440 || state.state.startsWith('nav-') ? 17 : 16);
           assert(state.contrast.every(c => c.ratio >= 4.5), `${width}/${state.state}: corrected text must exceed 4.5:1`);
           if (state.violations) {
             const original = before.item.states.find(s => s.state === state.state);
             const existing = new Set(severe(original));
             assert.deepEqual(severe(state).filter(key => !existing.has(key)), [], `${width}/${state.state}: no new serious/critical failures`);
+            assert.equal(state.violations.filter(v => v.id === 'color-contrast').length, 0, `${width}/${state.state}: contrast failures must be zero`);
           }
         }
-        const old = PNG.sync.read(before.screenshot), current = PNG.sync.read(screenshot);
-        assert.equal(current.width, old.width); assert.equal(current.height, old.height);
-        let changedPixels = 0, outsideTargets = 0;
-        for (let y = 0; y < old.height; y++) for (let x = 0; x < old.width; x++) {
-          const p = (y * old.width + x) * 4;
-          if (old.data.subarray(p, p + 4).equals(current.data.subarray(p, p + 4))) continue;
-          changedPixels++;
-          if (!rectangles.some(r => x >= Math.floor(r.x) - 1 && x <= Math.ceil(r.x + r.width) + 1 && y >= Math.floor(r.y) - 1 && y <= Math.ceil(r.y + r.height) + 1)) outsideTargets++;
+        item.visual = { ...compareImages(before.screenshot, screenshot, rectangles), identicalGeometry: true, navigationStates: {} };
+        for (const [state, current] of navScreenshots) {
+          const original = before.navScreenshots.get(state);
+          assert.deepEqual(current.rect, original.rect, 'Current-page navigation rectangle must not move');
+          assert.deepEqual(current.rectangles, original.rectangles, 'State-specific target geometry and scroll position must match');
+          // Use viewport rectangles after menu expansion/keyboard scrolling.
+          item.visual.navigationStates[state] = compareImages(original.bytes, current.bytes, current.rectangles);
         }
-        item.visual = { changedPixels, outsideTargets, identicalGeometry: true };
-        assert.equal(outsideTargets, 0, 'Pixel changes must be confined to the corrected text rectangles');
       }
       report.cases.push(item);
       console.log(JSON.stringify({ mode, width, violations: result.violations.map(v => ({ id: v.id, impact: v.impact, count: v.nodes.length })) }));
