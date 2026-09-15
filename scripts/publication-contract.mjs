@@ -2,6 +2,9 @@ import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
 import { existsSync, lstatSync, mkdirSync, readFileSync, realpathSync, writeFileSync } from "node:fs";
 import { isAbsolute, relative, resolve, sep } from "node:path";
+import { validateLogoCandidate } from "./partner-logo-contract.mjs";
+import { canonicalJson, resolveSafeRepositoryPath } from "./publication-shared.mjs";
+export { canonicalJson, resolveSafeRepositoryPath } from "./publication-shared.mjs";
 
 export const CONTRACT_VERSION = 1;
 export const REPOSITORY = "BackPackKidz/backpackkidz";
@@ -71,23 +74,6 @@ const SECRET_PATTERNS = [
 const sha256 = (value) =>
   createHash("sha256").update(value, "utf8").digest("hex");
 
-const stableValue = (value) => {
-  if (Array.isArray(value)) {
-    return value.map(stableValue);
-  }
-
-  if (value && typeof value === "object") {
-    return Object.fromEntries(
-      Object.keys(value)
-        .sort()
-        .map((key) => [key, stableValue(value[key])])
-    );
-  }
-
-  return value;
-};
-
-export const canonicalJson = (value) => JSON.stringify(stableValue(value));
 export const proposalDigest = (proposal) => `sha256:${sha256(canonicalJson(proposal))}`;
 export const textDigest = (value) => `sha256:${sha256(value)}`;
 const normalizeGitText = (value) => value.replace(/\r\n?/gu, "\n");
@@ -360,65 +346,6 @@ export const applyProposalToSource = (source, proposal) => {
   }
 
   return nextSource;
-};
-
-const isPathInside = (rootPath, candidatePath) => {
-  const relativePath = relative(rootPath, candidatePath);
-  return relativePath === "" || (!isAbsolute(relativePath) && relativePath !== ".." && !relativePath.startsWith(`..${sep}`));
-};
-
-const resolveSafeRepositoryPath = (
-  root,
-  repositoryRelativePath,
-  { allowMissing = false, requireDirectory = false, requireFile = false } = {}
-) => {
-  const rootPath = resolve(root);
-  const candidatePath = resolve(rootPath, repositoryRelativePath);
-
-  if (!isPathInside(rootPath, candidatePath)) {
-    fail("Resolved publication path escaped the repository root.");
-  }
-
-  const relativePath = relative(rootPath, candidatePath);
-  let currentPath = rootPath;
-
-  for (const segment of relativePath.split(sep).filter(Boolean)) {
-    currentPath = resolve(currentPath, segment);
-
-    if (!existsSync(currentPath)) {
-      if (allowMissing) {
-        continue;
-      }
-
-      fail(`Required publication path does not exist: ${repositoryRelativePath}.`);
-    }
-
-    if (lstatSync(currentPath).isSymbolicLink()) {
-      fail(`Publication paths must not contain symbolic links or reparse points: ${repositoryRelativePath}.`);
-    }
-  }
-
-  if (existsSync(candidatePath)) {
-    const realRoot = realpathSync(rootPath);
-    const realCandidate = realpathSync(candidatePath);
-    const candidateStats = lstatSync(candidatePath);
-
-    if (!isPathInside(realRoot, realCandidate)) {
-      fail("Canonical publication path escaped the repository root.");
-    }
-
-    if (requireFile && (!candidateStats.isFile() || candidateStats.nlink !== 1)) {
-      fail(`Governed publication target must be a single-link regular file: ${repositoryRelativePath}.`);
-    }
-
-    if (requireDirectory && !candidateStats.isDirectory()) {
-      fail(`Governed publication directory is not a directory: ${repositoryRelativePath}.`);
-    }
-  } else if (!allowMissing) {
-    fail(`Required publication path does not exist: ${repositoryRelativePath}.`);
-  }
-
-  return candidatePath;
 };
 
 export const resolveSlotPath = (root, slot) => {
@@ -916,6 +843,8 @@ export const validateCandidateDiff = (root, { base, head }) => {
   }
 
   const slotFiles = new Set(Object.values(SLOT_DEFINITIONS).map(({ file }) => file));
+  const logoResult = validateLogoCandidate(root, { base, head });
+  if (logoResult) return logoResult;
   const governedChanges = changes.filter(
     ({ file }) => slotFiles.has(file) || file.startsWith("publication/audit/")
   );
