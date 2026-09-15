@@ -23,34 +23,47 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           python - <<'PY'
-          import json, pathlib, urllib.request
+          import json, os, pathlib, urllib.request
           old = 'BackPackKidz/backpackkidz'
           new = 'matthewart100-sys/backpackkidz'
-          expected = {
-              'scripts/partner-logo-contract.mjs': 2,
-              'scripts/partner-logo.mjs': 1,
-              'publication/partner-logo-main-protection-proposal.json': 1,
-              'tests/partner-logo-contract.test.mjs': 3,
-          }
-          request = urllib.request.Request('https://api.github.com/repos/' + new, headers={'Authorization': 'Bearer ' + __import__('os').environ['GH_TOKEN'], 'Accept': 'application/vnd.github+json'})
+          escaped_old = r'BackPackKidz\/backpackkidz'
+          escaped_new = r'matthewart100-sys\/backpackkidz'
+          request = urllib.request.Request('https://api.github.com/repos/' + new, headers={'Authorization': 'Bearer ' + os.environ['GH_TOKEN'], 'Accept': 'application/vnd.github+json'})
           with urllib.request.urlopen(request, timeout=20) as response:
               repo = json.load(response)
           assert repo['id'] == 1264408024, repo['id']
           assert repo['full_name'] == new, repo['full_name']
-          for name, count in expected.items():
+          replacements = {
+              'scripts/partner-logo-contract.mjs': [(old, new, 2)],
+              'scripts/partner-logo.mjs': [(escaped_old, escaped_new, 1)],
+              'publication/partner-logo-main-protection-proposal.json': [(old, new, 1)],
+              'tests/partner-logo-contract.test.mjs': [(old, new, 3)],
+          }
+          for name, edits in replacements.items():
               path = pathlib.Path(name)
               text = path.read_text(encoding='utf-8')
-              actual = text.count(old)
-              assert actual == count, (name, actual, count)
-              path.write_text(text.replace(old, new), encoding='utf-8', newline='\n')
+              for before, after, count in edits:
+                  actual = text.count(before)
+                  assert actual == count, (name, before, actual, count)
+                  text = text.replace(before, after)
+              path.write_text(text, encoding='utf-8', newline='\n')
           proposal = json.loads(pathlib.Path('publication/partner-logo-main-protection-proposal.json').read_text())
           assert proposal['repository'] == new
           assert proposal['applied'] is False and proposal['authorization_required'] is True
+          governed = [pathlib.Path('scripts'), pathlib.Path('publication'), pathlib.Path('tests')]
+          leftovers = []
+          for root in governed:
+              for path in root.rglob('*'):
+                  if not path.is_file():
+                      continue
+                  try:
+                      text = path.read_text(encoding='utf-8')
+                  except UnicodeDecodeError:
+                      continue
+                  if old in text or escaped_old in text:
+                      leftovers.append(str(path))
+          assert not leftovers, leftovers
           PY
-          if git grep -n -F 'BackPackKidz/backpackkidz' -- scripts publication tests; then
-            echo 'stale governed repository identity remains' >&2
-            exit 1
-          fi
           test "$(git diff --name-only | sort)" = "$(printf '%s\n' publication/partner-logo-main-protection-proposal.json scripts/partner-logo-contract.mjs scripts/partner-logo.mjs tests/partner-logo-contract.test.mjs | sort)"
           git diff --check
       - name: Install and validate
